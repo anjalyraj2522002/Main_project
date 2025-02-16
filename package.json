@@ -16,6 +16,7 @@
     "express-fileupload": "^1.2.1",
     "express-handlebars": "^5.3.0",
     "express-session": "^1.17.1",
+<<<<<<< HEAD
     "fs": "^0.0.1-security",
     "hbs": "^4.1.1",
     "http-errors": "~1.6.3",
@@ -24,6 +25,13 @@
     "morgan": "~1.9.1",
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
+=======
+    "hbs": "^4.1.1",
+    "http-errors": "~1.6.3",
+    "mongodb": "^3.6.5",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.22",
+>>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     "razorpay": "^2.0.6",
     "sweetalert2": "^11.14.1"
   }

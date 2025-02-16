@@ -18,6 +18,7 @@ const verifySignedIn = (req, res, next) => {
 /* GET admins listing. */
 router.get("/", verifySignedIn, function (req, res, next) {
   let administator = req.session.admin;
+<<<<<<< HEAD
   adminHelper.getAllPendingComplaints().then((cmp) => {
     let count = cmp ? cmp.length : 0; 
     res.render("admin/home", { admin: true, cmp, layout: "admin-layout", administator,count });
@@ -147,6 +148,13 @@ router.post("/set-meeting", async (req, res) => {
       res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
+=======
+  adminHelper.getAllProducts().then((products) => {
+    res.render("admin/home", { admin: true, products, layout: "admin-layout", administator });
+  });
+});
+
+>>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
 
 router.get("/all-notifications", verifySignedIn, async function (req, res) {
