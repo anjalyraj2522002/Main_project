@@ -1,0 +1,181 @@
+<style>
+    .ck-editor__editable_inline {
+    min-height: 325px;
+ }
+</style>
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Manage Complaint</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item active">view complaint</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Assign complaint</h5>
+    <input type="hidden" name="date" id="datetime">
+    {{#if user}}
+    <input type="hidden" value="{{user._id}}" name="applicantId">
+    <input type="hidden" value="{{user.Fname}} {{user.Lname}}" name="applicantName">
+    <input type="hidden" value="{{user.Phone}}" name="applicantPhone">
+    <input type="hidden" value="{{user.Email}}" name="applicantEmail">
+    <input type="hidden" value="{{user.Pincode}}" name="applicantPincode">
+
+    {{/if}}
+    
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                    <label class="form-label" for="date">Date</label>
+                    <input class="form-control" id="date" value="{{cmp.date}}" name="date" type="text" readonly>
+                </div>
+                   <div class="form-group">
+                    <label class="form-label" for="subject">Subject (Short Description)</label>
+                    <input class="form-control" id="subject" value="{{cmp.subject}}" name="subject" type="text" readonly>
+                </div>
+                <!-- Description -->
+                <div class="form-group">
+                        <label class="form-label" for="desc">Description</label>
+                        <div class="border p-3 rounded" style="border: 1px solid #ccc; background-color: #f9f9f9;">
+                            {{{cmp.desc}}}
+                        </div>
+                </div>
+                {{!-- <div class="form-group">
+                        <label class="form-label">Attachments</label>
+                        <div id="attachmentContainer">
+                            <div class="attachment-input">
+                                <select name="attachmentType[]" class="form-select attachment-type">
+                                    <option value="image">Image (PNG)</option>
+                                    <option value="video">Video (MP4)</option>
+                                    <option value="pdf">PDF</option>
+                                </select>
+                                <input type="file" name="attachments[]" class="form-control" accept="image/png,video/mp4,application/pdf">
+                            </div>
+                        </div>
+                    </div> --}}
+                
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                      <div class="form-group">
+                    <label class="form-label">Assign to Government Official</label>
+                    <select class="form-select" id="govt-official" name="officialId">
+                        <option value="">Select Official</option>
+                        {{#each officials}}
+                        <option value="{{this._id}}">{{this.Name}} - {{this.Designation}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <button id="assign-btn" class="btn btn-primary mt-3">Assign</button>
+                     <div class="form-group">
+                    <label class="form-label" for="department">Department Concerned</label>
+                    <select class="form-select" id="department" name="department" disabled>
+                        <option value="Revenue" {{#if (eq cmp.department "Revenue")}}selected{{/if}}>Revenue</option>
+                        <option value="Civil Supplies" {{#if (eq cmp.department "Civil Supplies")}}selected{{/if}}>Civil Supplies</option>
+                        <option value="Local Self/Panchayat" {{#if (eq cmp.department "Local Self/Panchayat")}}selected{{/if}}>Local Self/Panchayat</option>
+                    </select>
+                </div>
+
+                <!-- Complaint Category -->
+                <div class="form-group">
+                    <label class="form-label" for="category">Complaint Category</label>
+                    <select class="form-select" id="category" name="category" disabled>
+                        <option value="payment" {{#if (eq cmp.category "payment")}}selected{{/if}}>Payment Issues</option>
+                        <option value="rejection" {{#if (eq cmp.category "rejection")}}selected{{/if}}>Application Rejection</option>
+                        <option value="delayed" {{#if (eq cmp.category "delayed")}}selected{{/if}}>Delayed Processing</option>
+                        <option value="incorrect" {{#if (eq cmp.category "incorrect")}}selected{{/if}}>Incorrect Information</option>
+                        <option value="technical" {{#if (eq cmp.category "technical")}}selected{{/if}}>Technical Issues</option>
+                        <option value="other" {{#if (eq cmp.category "other")}}selected{{/if}}>Other Issues</option>
+                    </select>
+                </div>
+
+                <!-- Grievance Locality -->
+                <div class="form-group">
+                    <label class="form-label" for="locality">Grievance Locality</label>
+                    <input class="form-control" id="locality" value="{{cmp.locality}}" name="locality" type="text" readonly>
+                </div>
+
+                <!-- Grievance Site Address -->
+                <div class="form-group">
+                    <label class="form-label" for="office_address">Grievance Site Address</label>
+                    <textarea class="form-control" id="office_address" name="office_address" rows="4" readonly>{{cmp.office_address}}</textarea>
+                </div>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+
+
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<script>
+    // Get current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = ((now.getHours() + 11) % 12 + 1).toString().padStart(2, '0'); // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    // Set default value to current date and time in 12-hour format with AM/PM
+    const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.getElementById('datetime').value = defaultDateTime;
+</script>
+
+
+<script>
+document.getElementById("assign-btn").addEventListener("click", function() {
+    
+    const complaintId = `{{cmp.complaintId}}`; // Complaint ID
+    const officialId = document.getElementById("govt-official").value;
+
+    alert(complaintId,officialId)
+
+    if (!officialId) {
+        alert("Please select an official!");
+        return;
+    }
+
+    fetch("/admin/assign-complaint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ complaintId, officialId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Complaint Assigned Successfully!");
+            location.reload();
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
+</script>

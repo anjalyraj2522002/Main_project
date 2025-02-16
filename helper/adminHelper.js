@@ -2,15 +2,162 @@ var db = require("../config/connection");
 var collections = require("../config/collections");
 var bcrypt = require("bcrypt");
 const objectId = require("mongodb").ObjectID;
-const { ObjectId } = require('mongodb'); // Import ObjectId for MongoDB
+
 
 module.exports = {
+  getAllComplaints: () => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find()
+        .toArray();
+      resolve(result);
+    });
+  },
+
+  getAllPendingComplaints:() => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find({status:"Pending"})
+        .toArray();
+      resolve(result);
+    });
+  },
+  getAllUnderProcessComplaints:() => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find({status:"Under Process"})
+        .toArray();
+      resolve(result);
+    });
+  },
+  getAllResolvedComplaints:() => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find({status:"Resolved"})
+        .toArray();
+      resolve(result);
+    });
+  },
+  getAllRejectedComplaints:() => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find({status:"Rejected"})
+        .toArray();
+      resolve(result);
+    });
+  },
+
+  getAllAssignedComplaints:() => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .find({status:"Assigned"})
+        .toArray();
+      resolve(result);
+    });
+  },
+   ///////VIEW DETAILS/////////////////////                                            
+   getComplaintDetails: (Id) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .findOne({
+          _id: objectId(Id)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+  // Fetch officials by matching department
+  getOfficialsByDepartment: (department) => {
+    console.log("dept:",department)
+    return db.get()
+        .collection(collections.GOVT_COLLECTION)
+        .find({ Department: department, approved: true }) // Match department & approved officials
+        .toArray();
+},
+
+// Assign complaint to an official
+assignComplaint: (complaintId, officialId) => {
+    return db.get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .updateOne(
+            { complaintId: complaintId },
+            { $set: { assignedTo: objectId(officialId), status: "Assigned" } }
+        )
+        .then(() => {
+          console.log("in helper  ",complaintId, officialId)
+            return db.get()
+                .collection(collections.GOVT_COLLECTION)
+                .updateOne(
+                    { _id: objectId(officialId) },
+                    { $push: { assignedComplaints: complaintId } } // Add complaint to official's list
+                );
+        });
+},
+getAllMeetings:()=>{
+  return new Promise(async (resolve, reject) => {
+    let result = await db
+      .get()
+      .collection(collections.MEETINGS_COLLECTION)
+      .find({status:"Pending"})
+      .toArray();
+    resolve(result);
+  });
+
+},
+getAllRejectedMeetings:()=>{
+  return new Promise(async (resolve, reject) => {
+    let result = await db
+      .get()
+      .collection(collections.MEETINGS_COLLECTION)
+      .find({status:"Rejected"})
+      .toArray();
+    resolve(result);
+  });
+
+},
+getAllAprrovedMeetings:()=>{
+  return new Promise(async (resolve, reject) => {
+    let result = await db
+      .get()
+      .collection(collections.MEETINGS_COLLECTION)
+      .find({status:"Approved"})
+      .toArray();
+    resolve(result);
+  });
+
+},
+sendNotification :async (userId, message) => {
+  try {
+      await db.get().collection(collections.NOTIFICATIONS_COLLECTION).insertOne({
+          userId: objectId(userId),
+          message,
+          seen: false,
+          createdAt: new Date()
+      });
+  } catch (error) {
+      console.error("Error sending notification:", error);
+  }
+},
 
   ///////ADD builder/////////////////////                                         
   addnotification: (notification, callback) => {
     console.log(notification);
 
-    // Convert userId to ObjectId if it's present
+    // Convert userId to objectId if it's present
     if (notification.userId) {
       notification.userId = new objectId(notification.userId);
     }
@@ -110,19 +257,7 @@ module.exports = {
     });
   },
 
-  ///////ADD builder DETAILS/////////////////////                                            
-  getbuilderDetails: (builderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.BUILDER_COLLECTION)
-        .findOne({
-          _id: objectId(builderId)
-        })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
+ 
 
   ///////DELETE builder/////////////////////                                            
   deletebuilder: (builderId) => {
@@ -181,7 +316,7 @@ module.exports = {
     console.log(product);
     product.Price = parseInt(product.Price);
     db.get()
-      .collection(collections.PRODUCTS_COLLECTION)
+      .collection(collections.COMPLAINTS_COLLECTION)
       .insertOne(product)
       .then((data) => {
         console.log(data);
@@ -189,16 +324,7 @@ module.exports = {
       });
   },
 
-  getAllProducts: () => {
-    return new Promise(async (resolve, reject) => {
-      let products = await db
-        .get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .find()
-        .toArray();
-      resolve(products);
-    });
-  },
+ 
 
   doSignup: (adminData) => {
     return new Promise(async (resolve, reject) => {
@@ -245,7 +371,7 @@ module.exports = {
   getProductDetails: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .findOne({ _id: objectId(productId) })
         .then((response) => {
           resolve(response);
@@ -256,7 +382,7 @@ module.exports = {
   deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .removeOne({ _id: objectId(productId) })
         .then((response) => {
           console.log(response);
@@ -268,7 +394,7 @@ module.exports = {
   updateProduct: (productId, productDetails) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .updateOne(
           { _id: objectId(productId) },
           {
@@ -289,7 +415,7 @@ module.exports = {
   deleteAllProducts: () => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .remove({})
         .then(() => {
           resolve();
@@ -329,12 +455,12 @@ module.exports = {
   blockUser: (userId) => {
     return new Promise((resolve, reject) => {
       try {
-        // Convert the userId to ObjectId if it's not already
-        const objectId = new ObjectId(userId);
+        // Convert the userId to objectId if it's not already
+        const objectId = new objectId(userId);
 
         // Use updateOne to set isDisable to true
         db.get().collection(collections.USERS_COLLECTION).updateOne(
-          { _id: objectId }, // Find user by ObjectId
+          { _id: objectId }, // Find user by objectId
           { $set: { isDisable: true } }, // Set the isDisable field to true
           (err, result) => {
             if (err) {
@@ -345,7 +471,7 @@ module.exports = {
           }
         );
       } catch (err) {
-        reject(err); // Catch any error in case of an invalid ObjectId format
+        reject(err); // Catch any error in case of an invalid objectId format
       }
     });
   },
@@ -456,11 +582,11 @@ module.exports = {
     console.log(details);
     return new Promise(async (resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
-            .collection(collections.PRODUCTS_COLLECTION)
+            .collection(collections.COMPLAINTS_COLLECTION)
             .find({
               $text: {
                 $search: details.search,

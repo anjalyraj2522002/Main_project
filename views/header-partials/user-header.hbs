@@ -39,7 +39,8 @@
             <!-- Login and Signup Buttons with Navbar Toggler -->
             <div class="d-flex align-items-center gap-2">
                 {{#if user}}
-                <a href="/orders" class="btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">Your Bookings</a>
+                <a href="/add-complaint" class="btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">Add Complaints</a>
+                <a href="/my-complaints" class="btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">Your Complaints</a>
                 <a href="/profile" class="btn btn2 btn-sm btn-dark d-none d-md-inline-block">Hi, {{user.Fname}}
                     {{user.Lname}}</a>
                 {{else}}

@@ -18,11 +18,135 @@ const verifySignedIn = (req, res, next) => {
 /* GET admins listing. */
 router.get("/", verifySignedIn, function (req, res, next) {
   let administator = req.session.admin;
-  adminHelper.getAllProducts().then((products) => {
-    res.render("admin/home", { admin: true, products, layout: "admin-layout", administator });
+  adminHelper.getAllPendingComplaints().then((cmp) => {
+    let count = cmp ? cmp.length : 0; 
+    res.render("admin/home", { admin: true, cmp, layout: "admin-layout", administator,count });
+  });
+});
+router.get("/admin/home", verifySignedIn, function (req, res, next) {
+  let administator = req.session.admin;
+  adminHelper.getAllPendingComplaints().then((cmp) => {
+    let count = cmp ? cmp.length : 0; 
+    res.render("admin/home", { admin: true, cmp, layout: "admin-layout", administator,count });
   });
 });
 
+router.get("/complaint-assigned", verifySignedIn, function (req, res, next) {
+  let administator = req.session.admin;
+  adminHelper.getAllAssignedComplaints().then((cmp) => {
+    let count = cmp ? cmp.length : 0; 
+    console.log(cmp)
+    res.render("admin/complaint-assigned", { admin: true, cmp, layout: "admin-layout", count,administator });
+  });
+});
+router.get("/complaint-progress", verifySignedIn, function (req, res, next) {
+  let administator = req.session.admin;
+  adminHelper.getAllUnderProcessComplaints().then((cmp) => {
+    let count = cmp ? cmp.length : 0; 
+    console.log(cmp)
+    res.render("admin/complaint-progress", { admin: true, cmp, layout: "admin-layout",count, administator });
+  });
+});
+router.get("/complaint-resolved", verifySignedIn, function (req, res, next) {
+  let administator = req.session.admin;
+  adminHelper.getAllResolvedComplaints().then((cmp) => {
+    let count = cmp ? cmp.length : 0; 
+    console.log(cmp)
+    res.render("admin/complaint-resolved", { admin: true, cmp, layout: "admin-layout", administator,count });
+  });
+});
+router.get("/complaint-rejected", verifySignedIn, function (req, res, next) {
+  let administator = req.session.admin;
+  adminHelper.getAllRejectedComplaints().then((cmp) => {
+    console.log(cmp)
+    let count = cmp ? cmp.length : 0; 
+    res.render("admin/complaint-rejected", { admin: true, cmp, layout: "admin-layout",count, administator });
+  });
+});
+
+
+router.get("/view-cmp/:id", verifySignedIn,async function (req, res, next) {
+  let administator = req.session.admin;
+  let cmpId = req.params.id;
+  let cmp = await adminHelper.getComplaintDetails(cmpId);
+  let officials = await adminHelper.getOfficialsByDepartment(cmp.department); 
+   // console.log(officials,"viewwwwwww")
+    res.render("admin/view-complaint", { admin: true, cmp, officials, layout: "admin-layout", administator });
+});
+
+router.post("/assign-complaint", async (req, res) => {
+  const { complaintId, officialId } = req.body;
+  console.log("in assing ",complaintId, officialId)
+  try {
+      await adminHelper.assignComplaint(complaintId, officialId);
+      res.redirect("/admin")
+  } catch (error) {
+      console.error("Error assigning complaint:", error);
+      res.json({ success: false, message: error.message });
+  }
+});
+router.get("/manage-meeting",verifySignedIn,async (req,res)=>{
+  let administator = req.session.admin;
+  adminHelper.getAllMeetings().then((meetings) => {
+    res.render("admin/manage-meeting", { admin: true, meetings, layout: "admin-layout", administator });
+  });
+})
+router.get("/meeting-approved",verifySignedIn,async (req,res)=>{
+  let administator = req.session.admin;
+  adminHelper.getAllAprrovedMeetings().then((meetings) => {
+    res.render("admin/meeting-approved", { admin: true, meetings, layout: "admin-layout", administator });
+  });
+})
+router.get("/complaint-approved",verifySignedIn,async (req,res)=>{
+  let administator = req.session.admin;
+  adminHelper.getAllAprrovedMeetings().then((meetings) => {
+    res.render("admin/meeting-approved", { admin: true, meetings, layout: "admin-layout", administator });
+  });
+})
+router.get("/meeting-rejected",verifySignedIn,async (req,res)=>{
+  let administator = req.session.admin;
+  adminHelper.getAllRejectedMeetings().then((meetings) => {
+    res.render("admin/meeting-rejected", { admin: true, meetings, layout: "admin-layout", administator });
+  });
+})
+router.post("/set-meeting", async (req, res) => {
+  console.log("setttttttttttt",req.body,"ttt&&&&&")
+  try {
+      let { meetingId, scheduledTime, status } = req.body;
+
+      if (!meetingId || !scheduledTime || !status) {
+          return res.status(400).json({ success: false, message: "All fields are required" });
+      }
+
+      let meeting = await db.get().collection(collections.MEETINGS_COLLECTION).findOne({ _id: ObjectId(meetingId) });
+
+      if (!meeting) {
+          return res.status(404).json({ success: false, message: "Meeting not found" });
+      }
+
+      await db.get().collection(collections.MEETINGS_COLLECTION).updateOne(
+          { _id: ObjectId(meetingId) },
+          { $set: { scheduledTime, status } }
+      );
+
+      // Notify Government Official
+      await adminHelper.sendNotification(meeting.requestedBy, `Your meeting is scheduled on ${scheduledTime}. Status: ${status}`);
+
+      // Notify All Relevant Departments
+      let departmentOfficials = await db.get().collection(collections.GOVT_COLLECTION).find({
+          Department: { $in: meeting.departments }
+      }).toArray();
+
+      departmentOfficials.forEach(async (official) => {
+          await adminHelper.sendNotification(official._id, `A meeting for ${meeting.departments.join(", ")} is scheduled on ${scheduledTime}.`);
+      });
+
+      res.json({ success: true, message: "Meeting updated successfully!" });
+  } catch (error) {
+      console.error("Error updating meeting:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
 
 
 router.get("/all-notifications", verifySignedIn, async function (req, res) {

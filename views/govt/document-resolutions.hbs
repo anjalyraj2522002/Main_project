@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-header">
+        <h4>Document Resolutions</h4>
+    </div>
+    <div class="card-body">
+        <table id="dataTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Complaint ID</th>
+                    <th>Applicant Name</th>
+                    <th>Department</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    {{!-- <th>Actions</th> --}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each complaints}}
+                <tr>
+                    <td>{{this.complaintId}}</td>
+                    <td>{{this.applicantName}}</td>
+                    <td>{{this.department}}</td>
+                    <td>{{formatDate this.date}}</td>
+                    <td>{{this.status}}</td>
+                    {{!-- <td>
+                        <a href="/govt/view-complaint/{{this._id}}"  class="btn btn-info btn-sm view-complaint" data-id="{{this._id}}">View</a>
+                    </td> --}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{!-- <button id="generatePDF" class="btn btn-primary mt-3">Generate PDF</button> --}}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        let table = $('#dataTable').DataTable({
+            "searching": true // Ensure search is enabled
+        });
+
+        $('.view-complaint').on('click', function() {
+            console.log("hhhhh")
+            let id = $(this).data('id');
+            window.location.href = "/govt/view-complaint/" + id;
+        });
+    });
+</script>

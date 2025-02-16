@@ -1,0 +1,125 @@
+{{!-- <section>
+
+    <div class="container my-5">
+        <div class="table-responsive">
+            <table class="table" id="table">
+                <thead class="table-dark">
+                    <tr class="align-middle">
+                        <th scope="col">Date</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Pincode</th>
+                        <th scope="col">Mobile</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Payment</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Cancel</th>
+                        <th scope="col">View</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each orders}}
+                    <tr class="align-middle">
+                        <td>{{this.date}}</td>
+                        <td>{{this.order.address}}</td>
+                        <td>{{this.order.pincode}}</td>
+                        <td>{{this.order.mobile}}</td>
+                        <td>{{this.totalAmount}}</td>
+                        <td>{{this.paymentMethod}}</td>
+                        <td>{{this.status}}</td>
+                        <td>
+                            <a href="/cancel-order/{{this._id}}"
+                                onclick="return confirm('Are You Sure to Cancel This Order ?')"
+                                class="btn btn-danger">Cancel</a>
+                        </td>
+                        <td>
+                            <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Product</a>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{else}}
+    <div class="container mt-5">
+        <div class="alert alert-secondary" role="alert">
+            <h4 class="alert-heading">You Have Ordered Nothing!</h4>
+            <hr>
+            <p class="mb-0">You need to Order soemthing from the Shopping Cart/Cart.</p>
+        </div>
+        <div class="row">
+            <a href="/" class="btn btn-primary">Add Products</a>
+        </div>
+    </div>
+    {{/if}}
+</section> --}}
+
+
+<br><br>
+<div class="container-md mt-3 p-5">
+    <h4 class="mb-3">MY COMPLAINTS</h4>
+
+    {{#if cmp}}
+
+    <div class="row">
+        {{#each cmp}}
+        <div class="col-12 mb-3">
+            <div class="card single-product-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="card-content px-4 py-2">
+                            <!-- Product Title-->
+                            <h1>{{this.subject}}</h1>
+                            <!-- Product Price-->
+                            <p class="">Department: {{this.department}}</p>
+                              <p class="">Status: {{this.status}}</p>
+                              <p>days:{{daysElapsed this.date}}</p>
+                            <!-- Add To Cart Button-->
+                            {{!-- <a class="btn btn-dark"
+                                href="/view-ordered-workspaces/{{this._id}}">
+                                View Details</a> --}}
+                            {{!-- <a href="javascript:void(0);" onclick="canelorder('{{this._id}}')"
+                                class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </a> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    {{else}}
+    <br><br><br>
+    <div class="container mt-5">
+        <div class="alert alert-secondary" role="alert">
+            <h4 class="alert-heading">You Have Nothing!</h4>
+            <hr>       
+        </div>
+        <a href="/" class="btn btn-primary w-25">back</a>
+    </div>
+    {{/if}}
+</div>
+
+
+<script>
+    function canelorder(id) {
+        Swal.fire({
+            title: `Are you sure to cancel this order?`,
+            text: '',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#33ff68',
+            cancelButtonColor: '#d29eee',
+            confirmButtonText: 'Yes!',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete route if confirmed
+                window.location.href = `/cancel-order/${id}`;
+            }
+        });
+    }
+</script>

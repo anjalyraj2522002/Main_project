@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var hbs = require("express-handlebars");
+const moment = require("moment");
 var usersRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
 var govtRouter = require("./routes/govt");
@@ -34,6 +35,14 @@ app.engine(
       incremented: function (index) {
         index++;
         return index;
+      },
+      formatDateTime:(dateTime) => {
+        return moment(dateTime).format("DD-MM-YY hh:mm A"); 
+    },
+      daysElapsed:function(date){
+          const givenDate = moment(date, "YYYY-MM-DD");
+          const today = moment();
+          return today.diff(givenDate, "days");
       },
       eq: function (a, b) {
         return a === b;

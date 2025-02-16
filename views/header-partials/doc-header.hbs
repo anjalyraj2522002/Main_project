@@ -1,0 +1,111 @@
+<!-- Preloader -->
+<div id="preloader" class="bg-dark">
+    <div class="circle-loader">
+        <div class="circle-big"></div>
+    </div>
+</div>
+<!-- Internet Connection Status -->
+<!-- # This code for showing internet connection status -->
+<div class="internet-connection-status" id="internetStatus"></div>
+<!-- Header Area -->
+<div class="header-area" id="headerArea">
+    <div class="container-lg">
+        <div
+            class="header-content header-style-five position-relative d-flex align-items-center justify-content-between">
+            <!-- Logo Wrapper -->
+            <div class="logo-wrapper">
+                <a href="/">
+                    <img src="/images/img/logoblk.png" class="mt-3 mb-3" style="max-width: 250%; max-height: 40px;"
+                        alt="">
+                </a>
+            </div>
+
+            <!-- Centered Navigation Links -->
+            <ul class="d-none d-md-flex gap-4 nav-ul mx-auto">
+                <li class="nav-links">
+                   <h2><a href="/govt/document-resolutions">Complaint Records</a></h2> 
+                </li>
+                <li class="nav-links">
+                   
+                </li>
+            </ul>
+
+            <!-- Login and Signup Buttons with Navbar Toggler -->
+            <div class="d-flex align-items-center gap-2">
+                {{#if govt}}
+                <a href="/govt/home" class="btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">Official Portal</a>
+                <a href="/#" class="btn btn2 btn-sm btn-dark d-none d-md-inline-block">Hi, {{govt.Name}}</a>
+                {{/if}}
+                <div class="navbar--toggler" id="affanNavbarToggler" data-bs-toggle="offcanvas"
+                    data-bs-target="#affanOffcanvas" aria-controls="affanOffcanvas">
+                    <span class="d-block"></span>
+                    <span class="d-block"></span>
+                    <span class="d-block"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-ul {
+        margin-right: auto;
+        /* Align nav links to center */
+    }
+
+    @media only screen and (max-width: 600px) {
+        .nav-ul {
+            display: none;
+        }
+    }
+
+
+
+    .nav-links a {
+        font-size: 12px;
+        color: black;
+    }
+
+    .btn2 {
+        padding: 10px 30px;
+    }
+
+    .header-content.header-style-five .navbar--toggler {
+        border: 0px solid #ebebeb;
+        padding: 5px;
+        border-radius: 4px;
+    }
+</style>
+
+<!-- # Sidenav Left -->
+<!-- Offcanvas -->
+<div class="offcanvas offcanvas-start" id="affanOffcanvas" data-bs-scroll="true" tabindex="-1"
+    aria-labelledby="affanOffcanvsLabel">
+    <button class="btn-close btn-close-white text-reset" type="button" data-bs-dismiss="offcanvas"
+        aria-label="Close"></button>
+    <div class="offcanvas-body p-0">
+        <!-- Side Nav Wrapper -->
+        <div class="sidenav-wrapper">
+            <!-- Sidenav Profile -->
+            <div class="sidenav-profile bg-gradient">
+                <div class="sidenav-style1"></div>
+                <!-- User Thumbnail -->
+                <div class="user-profile"><img src="img/bg-img/2.jpg" alt=""></div>
+                <!-- User Info -->
+                {{#if govt}}
+                <div class="user-info">
+                    <h6 class="user-name mb-0">Hi, {{govt.Name}}</h6><span>{{govt.Email}}</span>
+                </div>
+                {{/if}}
+            </div>
+            <!-- Sidenav Nav -->
+            <!-- Social Info -->
+            {{!-- <div class="social-info-wrap"><a href="#"><i class="bi bi-facebook"></i></a><a href="#"><i
+                        class="bi bi-twitter"></i></a><a href="#"><i class="bi bi-linkedin"></i></a></div>
+            <!-- Copyright Info -->
+            <div class="copyright-info">
+                <p>2021 &copy; Made by<a href="#">Designing World</a></p>
+            </div> --}}
+        </div>
+    </div>
+</div>

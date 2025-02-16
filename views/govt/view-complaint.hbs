@@ -1,0 +1,210 @@
+<div class="page-content-wrapper main-content">
+    <div class="pt-3"></div>
+    <div class="container-lg direction-rtl">
+        {{!-- <h5 class="mb-3"> Welcome To Government official Dashboard</h5> --}}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="feature-card mx-auto ">
+                            {{!-- <div class="card mx-auto bg-gray">
+                                <i class="bi bi-people-fill"></i>
+                            </div> --}}
+                            <h5 class="mb-1">Manage Complaint</h5>
+                            <div class="form-group">
+                                <label class="form-label">Remarks</label>
+                                <textarea class="form-control" id="remarks" name="remarks"
+                                    placeholder="your remarks"></textarea>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">updated Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option selected>Select Status</option>
+                                    <option value="Pending Review">Pending Review</option>
+                                    <option value="Under Process">Under Process</option>
+                                    <option value="Resolved">Resolved</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <button id="assign-btn" class="btn btn-primary mt-3">Update</button>
+                        </div>
+                    </div>
+                    {{!-- <div class="col-6">
+                        <a href="#">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue"
+                                        class="bi bi-pc-display" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1zm1 13.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0M9.5 1a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM9 3.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5M1.5 2A1.5 1.5 0 0 0 0 3.5v7A1.5 1.5 0 0 0 1.5 12H6v2h-.5a.5.5 0 0 0 0 1H7v-4H1.5a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H7V2z" />
+                                    </svg>
+                                </div>
+                                <p class="mb-0">Meeting request</p>
+                            </div>
+                        </a>
+                    </div> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-lg">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Complaint Details</h5>
+                <input type="hidden" name="date" id="datetime">
+                {{#if user}}
+                <input type="hidden" value="{{user._id}}" name="applicantId">
+                <input type="hidden" value="{{user.Fname}} {{user.Lname}}" name="applicantName">
+                <input type="hidden" value="{{user.Phone}}" name="applicantPhone">
+                <input type="hidden" value="{{user.Email}}" name="applicantEmail">
+                <input type="hidden" value="{{user.Pincode}}" name="applicantPincode">
+
+                {{/if}}
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label" for="date">Date</label>
+                                    <input class="form-control" id="date" value="{{cmp.date}}" name="date" type="text"
+                                        readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="subject">Subject (Short Description)</label>
+                                    <input class="form-control" id="subject" value="{{cmp.subject}}" name="subject"
+                                        type="text" readonly>
+                                </div>
+                                <!-- Description -->
+                                <div class="form-group">
+                                    <label class="form-label" for="desc">Description</label>
+                                    <div class="border p-3 rounded"
+                                        style="border: 1px solid #ccc; background-color: #f9f9f9;">
+                                        {{{cmp.desc}}}
+                                    </div>
+                                </div>
+                                {{!-- <div class="form-group">
+                                    <label class="form-label">Attachments</label>
+                                    <div id="attachmentContainer">
+                                        <div class="attachment-input">
+                                            <select name="attachmentType[]" class="form-select attachment-type">
+                                                <option value="image">Image (PNG)</option>
+                                                <option value="video">Video (MP4)</option>
+                                                <option value="pdf">PDF</option>
+                                            </select>
+                                            <input type="file" name="attachments[]" class="form-control"
+                                                accept="image/png,video/mp4,application/pdf">
+                                        </div>
+                                    </div>
+                                </div> --}}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="form-group">
+                                    <label class="form-label" for="department">Department Concerned</label>
+                                    <select class="form-select" id="department" name="department" disabled>
+                                        <option value="Revenue" {{#if (eq cmp.department "Revenue" )}}selected{{/if}}>
+                                            Revenue</option>
+                                        <option value="Civil Supplies" {{#if (eq cmp.department "Civil Supplies"
+                                            )}}selected{{/if}}>Civil Supplies</option>
+                                        <option value="Local Self/Panchayat" {{#if (eq
+                                            cmp.department "Local Self/Panchayat" )}}selected{{/if}}>Local
+                                            Self/Panchayat</option>
+                                    </select>
+                                </div>
+
+                                <!-- Complaint Category -->
+                                <div class="form-group">
+                                    <label class="form-label" for="category">Complaint Category</label>
+                                    <select class="form-select" id="category" name="category" disabled>
+                                        <option value="payment" {{#if (eq cmp.category "payment" )}}selected{{/if}}>
+                                            Payment Issues</option>
+                                        <option value="rejection" {{#if (eq cmp.category "rejection" )}}selected{{/if}}>
+                                            Application Rejection</option>
+                                        <option value="delayed" {{#if (eq cmp.category "delayed" )}}selected{{/if}}>
+                                            Delayed Processing</option>
+                                        <option value="incorrect" {{#if (eq cmp.category "incorrect" )}}selected{{/if}}>
+                                            Incorrect Information</option>
+                                        <option value="technical" {{#if (eq cmp.category "technical" )}}selected{{/if}}>
+                                            Technical Issues</option>
+                                        <option value="other" {{#if (eq cmp.category "other" )}}selected{{/if}}>Other
+                                            Issues</option>
+                                    </select>
+                                </div>
+
+                                <!-- Grievance Locality -->
+                                <div class="form-group">
+                                    <label class="form-label" for="locality">Grievance Locality</label>
+                                    <input class="form-control" id="locality" value="{{cmp.locality}}" name="locality"
+                                        type="text" readonly>
+                                </div>
+
+                                <!-- Grievance Site Address -->
+                                <div class="form-group">
+                                    <label class="form-label" for="office_address">Grievance Site Address</label>
+                                    <textarea class="form-control" id="office_address" name="office_address" rows="4"
+                                        readonly>{{cmp.office_address}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pb-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    // Get current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = ((now.getHours() + 11) % 12 + 1).toString().padStart(2, '0'); // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    // Set default value to current date and time in 12-hour format with AM/PM
+    const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.getElementById('datetime').value = defaultDateTime;
+</script>
+
+
+<script>
+    document.getElementById("assign-btn").addEventListener("click", async () => {
+        let complaintId = `{{cmp._id}}`;
+        let status = document.getElementById("status").value;
+        let remarks = document.getElementById("remarks").value;
+
+        if (status === "Select Status") {
+            alert("Please select a valid status.");
+            return;
+        }
+
+        let response = await fetch("/govt/update-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ complaintId, status, remarks })
+        });
+
+        let result = await response.json();
+        if (result.success) {
+            alert("Status updated successfully!");
+            window.location.href = "/govt/home";
+        } else {
+            alert("Failed to update status.");
+        }
+    });
+</script>

@@ -4,6 +4,8 @@ var builderHelper = require("../helper/govtHelper");
 
 var router = express.Router();
 var db = require("../config/connection");
+const fs = require("fs");
+const path = require("path");
 var collections = require("../config/collections");
 const ObjectId = require("mongodb").ObjectID;
 
@@ -23,6 +25,79 @@ router.get("/", async function (req, res, next) {
   });
 });
 
+///////ADD complaint/////////////////////                                         
+router.get("/add-complaint", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  res.render("users/add-complaint", { user: true, layout: "layout", user });
+});
+                                         
+router.post("/add-complaint", async (req, res) => {
+  if (!req.session.user || !req.session.user._id) {
+    return res.redirect("/signin");
+  }
+
+  const { date, subject, desc, department, category, locality, office_address, "attachmentType[]": attachmentTypes,
+    applicantId, applicantName, applicantEmail, applicantPhone, applicantPincode } = req.body;
+
+  const complaintData = {
+    applicantId,
+    applicantName,
+    applicantPhone,
+    applicantEmail,
+    applicantPincode,
+    subject,
+    desc,
+    department,
+    category,
+    locality,
+    office_address,
+    date: date,
+    status: "Pending",
+    attachments: [],
+  };
+
+  userHelper.addComplaint(complaintData, async (complaintId, error) => {
+    if (error) {
+      console.log("Error adding complaint:", error);
+      return res.status(500).send("Failed to add complaint");
+    }
+
+    // Handle file uploads
+    if (req.files && req.files.attachments) {
+      const files = Array.isArray(req.files.attachments) ? req.files.attachments : [req.files.attachments];
+
+      files.forEach((file, index) => {
+        let extension = path.extname(file.name).toLowerCase();
+        let newFilename = `${complaintId}-${index + 1}`;
+
+        if ([".jpg", ".jpeg", ".png"].includes(extension)) {
+          newFilename += ".png";
+        } else if ([".mp4", ".avi", ".mov"].includes(extension)) {
+          newFilename += ".mp4";
+        } else if (extension === ".pdf") {
+          newFilename += ".pdf";
+        } else {
+          return; 
+        }
+
+        let uploadPath = path.join(__dirname, "../public/upload/", newFilename);
+        file.mv(uploadPath, (err) => {
+          if (err) console.log("Error saving file:", err);
+        });
+
+        complaintData.attachments.push(newFilename);
+      });
+
+      // Update complaint with attached files
+      await db.get().collection(collections.COMPLAINTS_COLLECTION).updateOne(
+        { complaintId },
+        { $set: { attachments: complaintData.attachments } }
+      );
+    }
+
+    res.redirect("/complaint-placed");
+  });
+});
 
 router.get("/notifications", verifySignedIn, function (req, res) {
   let user = req.session.user;  // Get logged-in user from session
@@ -421,19 +496,19 @@ router.post("/verify-payment", async (req, res) => {
     });
 });
 
-router.get("/order-placed", verifySignedIn, async (req, res) => {
+router.get("/complaint-placed", verifySignedIn, async (req, res) => {
   let user = req.session.user;
   let userId = req.session.user._id;
   // le = await userHelper.g(userId);
-  res.render("users/order-placed", { admin: false, user });
+  res.render("users/complaint-placed", { admin: false, user });
 });
 
-router.get("/orders", verifySignedIn, async function (req, res) {
+router.get("/my-complaints", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
   // Fetch user orders
-  let orders = await userHelper.getUserOrder(userId);
-  res.render("users/orders", { admin: false, user, orders });
+  let cmp = await userHelper.getUserComplaint(userId);
+  res.render("users/my-complaints", { admin: false, user, cmp});
 });
 
 router.get("/view-ordered-workspaces/:id", verifySignedIn, async function (req, res) {

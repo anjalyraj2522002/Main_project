@@ -115,7 +115,7 @@
         <div
             class="header-content header-style-five position-relative d-flex align-items-center justify-content-between">
             <!-- Logo Wrapper -->
-            <div class="logo-wrapper"><a href="/">
+            <div class="logo-wrapper"><a href="/govt">
                     {{!-- <img src="/assets2/img/core-img/logo.png" alt=""> --}}
                     <h4 class="mt-2" style="text-transform: uppercase; color:black; font-size:15px;font-weight:600;">
                         Grievance Management Portal</h4>
@@ -127,7 +127,7 @@
                     class="d-block"></span><span class="d-block"></span></div> --}}
             <div class="d-flex gap-4">
                 <div class="setting-wrapper">
-                    <a href="/builder/all-notifications" class="setting-trigger-btn">
+                    <a href="/govt/all-notifications" class="setting-trigger-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-bell" viewBox="0 0 16 16">
                             <path
@@ -170,15 +170,15 @@
         <!-- Sidenav Profile -->
         <div class="sidenav-profile bg-dark">
             <div class="sidenav-style1"></div>
-            {{#if builder}}
+            {{#if govt}}
 
             <!-- User Thumbnail -->
-            <div class="user-profile mt-5"><img src="/images/builder-images/{{builder._id}}.png" alt=""></div>
+            <div class="user-profile mt-5"><img src="/images/govt-images/{{govt._id}}.png" alt=""></div>
             <!-- User Info -->
             <div class="user-info">
-                <h6 class="user-name mb-0">Hi, {{builder.Name}}</h6>
+                <h6 class="user-name mb-0">Hi, {{govt.Name}}</h6>
             </div>
-            <a href="/builder/profile" class="btn btn-sm btn-info mt-3">My Profile</a>
+            <a href="/govt/profile" class="btn btn-sm btn-info mt-3">My Profile</a>
             {{else}}
             <div class="user-info">
                 <h6 class="user-name mb-0">CoSpace</h6><span>www.co-workspace.com</span>
@@ -188,14 +188,15 @@
         <!-- Sidenav Nav -->
 
         <ul class="sidenav-nav ps-0">
-            {{#if builder}}
+            {{#if govt}}
             <li><a href="/govt"><i class="bi bi-house-door"></i>Home</a></li>
             <li><a href="/govt/#"><i class="bi bi-people"></i>Manage Complaint</a></li>
             {{!-- <li><a href="/govt/all-workspaces"><i class="bi bi-layers"></i>Manage Workspace</a></li>
             <li><a href="/govt/all-orders"><i class="bi bi-telephone"></i>Manage Bookings and Reservations</a></li> --}}
-            <li><a href="/govt/#"><i class="bi bi-wallet2"></i>Meeting Requst</a></li>
+            <li><a href="/govt/request-meeting"><i class="bi bi-wallet2"></i>Meeting Requst</a></li>
+            <li><a href="/govt/document-resolutions"><i class="bi bi-wallet2"></i>Document Resolutions</a></li>
             <li><a href="/govt/#"><i class="bi bi-people"></i>Leaderboard</a></li>
-            <li><a href="/govt/builder-feedback"><i class="bi bi-megaphone"></i>Notifications</a></li>
+            <li><a href="/govt/all-notifications"><i class="bi bi-megaphone"></i>Notifications</a></li>
 
 
             {{!-- <li><a href="#"><i class="bi bi-cart-check"></i>Shop</a>

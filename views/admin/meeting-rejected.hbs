@@ -1,0 +1,110 @@
+<style>
+    .ck-editor__editable_inline {
+    min-height: 325px;
+ }
+</style>
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Manage Meetings</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item active">meeting</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                   <div class="card-body">
+                    <div class="mt-3">
+                    <a href="/admin/manage-meeting" class="btn btn-warning btn-sm active">Pending </a>
+                    <a href="/admin/meeting-approved" class="btn btn-success btn-sm">Approved </a>
+                    <a href="/admin/meeting-rejected" class="btn btn-danger btn-sm">Rejected </a>
+
+
+                    </div>
+                    
+                    <table class="table">
+                        <h5 class="mt-3 mb-2">Rejected Request</h5>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Official Name</th>
+            <th>Departments</th>
+            <th>Subject</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each meetings}}
+        <tr>
+            <td>{{this.requestedByName}}</td>
+            <td>{{this.departments}}</td>
+            <td>{{this.remarks}}</td>
+            <td>{{this.status}}</td>
+            <td>{{this.subject}}</td>
+            {{!-- <td>
+                <input type="datetime-local" id="schedule-{{this._id}}" />
+                <select id="status-{{this._id}}">
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+                <button class="btn btn-success mt-2" onclick="setMeeting('{{this._id}}')">Set</button>
+            </td> --}}
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+                   </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<script>
+    // Get current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = ((now.getHours() + 11) % 12 + 1).toString().padStart(2, '0'); // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    // Set default value to current date and time in 12-hour format with AM/PM
+    const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.getElementById('datetime').value = defaultDateTime;
+</script>
+
+
+<script>
+async function setMeeting(meetingId) {
+    let scheduledTime = document.getElementById(`schedule-${meetingId}`).value;
+    let status = document.getElementById(`status-${meetingId}`).value;
+
+    let response = await fetch("/admin/set-meeting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ meetingId, scheduledTime, status })
+    });
+
+    let result = await response.json();
+    if (result.success) {
+        alert("Meeting updated!");
+        window.location.reload();
+    } else {
+        alert("Failed to update meeting.");
+    }
+}
+</script>

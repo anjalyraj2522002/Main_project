@@ -1,0 +1,146 @@
+<div class="page-content-wrapper main-content">
+    <div class="pt-3"></div>
+    <div class="container-lg direction-rtl">
+        {{!-- <h5 class="mb-3"> Welcome To Government official Dashboard</h5> --}}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="feature-card mx-auto ">
+                            {{!-- <div class="card mx-auto bg-gray">
+                                <i class="bi bi-people-fill"></i>
+                            </div> --}}
+                            <h5 class="mb-1">Request Meeting</h5>
+                            <form id="meeting-form">
+                                <div class="form-group">
+                                    <label class="form-label">Select Departments</label>
+                                    <div>
+                                        <input type="checkbox" name="departments" value="Revenue"> Revenue<br>
+                                        <input type="checkbox" name="departments" value="Civil Supplies"> Civil
+                                        Supplies<br>
+                                        <input type="checkbox" name="departments" value="Local Self/Panchayat"> Local
+                                        Self/Panchayat<br>
+                                        {{!-- <input type="checkbox" name="departments" value="Health"> Health<br>
+                                        <input type="checkbox" name="departments" value="Education"> Education<br> --}}
+                                    </div>
+                                </div>
+                                 <div class="form-group">
+                                    <label class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" name="subject"
+                                        placeholder="subject" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea class="form-control" id="remarks" name="remarks"
+                                        placeholder="Your meeting request details"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary mt-3">Request Meeting</button>
+                            </form>
+
+                        </div>
+                    </div>
+                    {{!-- <div class="col-6">
+                        <a href="#">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue"
+                                        class="bi bi-pc-display" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1zm1 13.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0M9.5 1a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM9 3.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5M1.5 2A1.5 1.5 0 0 0 0 3.5v7A1.5 1.5 0 0 0 1.5 12H6v2h-.5a.5.5 0 0 0 0 1H7v-4H1.5a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H7V2z" />
+                                    </svg>
+                                </div>
+                                <p class="mb-0">Meeting request</p>
+                            </div>
+                        </a>
+                    </div> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-lg">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-4">Requests</h6>
+                <table class="w-100" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>date</th>
+                            <th>subject</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    {{#each meetings}}
+                    <tr>
+                        {{!-- <td>{{this.requestedByName}}</td> --}}
+                        <td>{{formatDate this.createdAt}}</td>
+                        <td>{{this.subject}}</td>
+                        <td>{{this.status}}</td>
+                        {{!-- <td>
+                            <input type="datetime-local" id="schedule-{{this._id}}" />
+                            <select id="status-{{this._id}}">
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                            <button class="btn btn-success mt-2" onclick="setMeeting('{{this._id}}')">Set</button>
+                        </td> --}}
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    // Get current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = ((now.getHours() + 11) % 12 + 1).toString().padStart(2, '0'); // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    // Set default value to current date and time in 12-hour format with AM/PM
+    const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.getElementById('datetime').value = defaultDateTime;
+</script>
+
+
+<script>
+    document.getElementById("meeting-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        let subject = document.getElementById("subject").value;
+        let remarks = document.getElementById("remarks").value;
+        let departments = Array.from(document.querySelectorAll('input[name="departments"]:checked'))
+            .map(checkbox => checkbox.value);
+
+        if (departments.length === 0) {
+            alert("Please select at least one department.");
+            return;
+        }
+
+        let response = await fetch("/govt/request-meeting", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ remarks, departments,subject })
+        });
+
+        let result = await response.json();
+        if (result.success) {
+            alert("Meeting request sent!");
+            window.location.reload();
+        } else {
+            alert("Failed to send request.");
+        }
+    });
+</script>

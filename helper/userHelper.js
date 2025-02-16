@@ -1,17 +1,68 @@
 var db = require("../config/connection");
 var collections = require("../config/collections");
 const bcrypt = require("bcrypt");
-const objectId = require("mongodb").ObjectID;
+const ObjectId = require("mongodb").ObjectID;
 const Razorpay = require("razorpay");
-const ObjectId = require('mongodb').ObjectId; // Required to convert string to ObjectId
+
 
 
 var instance = new Razorpay({
   key_id: "rzp_test_8NokNgt8cA3Hdv",
   key_secret: "xPzG53EXxT8PKr34qT7CTFm9",
 });
+const getNextComplaintId = async () => {
+  const lastComplaint = await db.get().collection(collections.COMPLAINTS_COLLECTION)
+    .find().sort({ _id: -1 }).limit(1).toArray();
+
+  let nextId = "cmp01";  // Default for first complaint
+  console.log(lastComplaint,"lastComplaint")
+  if (lastComplaint.length > 0) {
+    const lastId = lastComplaint[0].complaintId; // Example: "cmp09"
+    const number = parseInt(lastId.replace("cmp", ""), 10) + 1; // Increment number
+    nextId = `cmp${number.toString().padStart(2, "0")}`; // Format as cmpXX
+  }else{
+    return nextId;
+  }
+  
+  return nextId;
+};
+
 
 module.exports = {
+///////ADD workspace/////////////////////                                         
+  addComplaint:async (complaint, callback) => {
+    
+    const complaintId = await getNextComplaintId();
+    complaint.complaintId = complaintId; // Assign generated ID
+    
+    db.get()
+      .collection(collections.COMPLAINTS_COLLECTION)
+      .insertOne(complaint)
+      .then((data) => {
+        console.log("cmp addes%%%%%:",data.insertedId)
+        callback(data.insertedId.toString());
+        //callback(data.ops[0]._id); // Return the inserted workspace ID
+      })
+      .catch((error) => {
+        callback(null, error);
+      });
+  },
+
+  getUserComplaint: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let cmp = await db
+          .get()
+          .collection(collections.COMPLAINTS_COLLECTION)
+          .find({ applicantId: userId }) // Use 'userId' directly, not inside 'orderObject'
+          .toArray();
+
+        resolve(cmp);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 
   getnotificationById: (userId) => {
     return new Promise(async (resolve, reject) => {
@@ -113,7 +164,7 @@ module.exports = {
   //     let workspaces = await db
   //       .get()
   //       .collection(collections.WORKSPACE_COLLECTION)
-  //       .find({ builderId: objectId(builderId) }) // Filter by builderId
+  //       .find({ builderId: ObjectId(builderId) }) // Filter by builderId
   //       .toArray();
   //     resolve(workspaces);
   //   });
@@ -125,7 +176,7 @@ module.exports = {
       db.get()
         .collection(collections.WORKSPACE_COLLECTION)
         .findOne({
-          _id: objectId(workspaceId)
+          _id: ObjectId(workspaceId)
         })
         .then((response) => {
           resolve(response);
@@ -137,7 +188,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       let products = await db
         .get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .find()
         .toArray();
       resolve(products);
@@ -214,7 +265,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collections.USERS_COLLECTION)
-        .findOne({ _id: objectId(userId) })
+        .findOne({ _id: ObjectId(userId) })
         .then((user) => {
           resolve(user);
         })
@@ -229,7 +280,7 @@ module.exports = {
       db.get()
         .collection(collections.USERS_COLLECTION)
         .updateOne(
-          { _id: objectId(userId) },
+          { _id: ObjectId(userId) },
           {
             $set: {
               Fname: userDetails.Fname,
@@ -259,7 +310,7 @@ module.exports = {
         .collection(collections.CART_COLLECTION)
         .aggregate([
           {
-            $match: { user: objectId(userId) },
+            $match: { user: ObjectId(userId) },
           },
           {
             $unwind: "$products",
@@ -272,7 +323,7 @@ module.exports = {
           },
           {
             $lookup: {
-              from: collections.PRODUCTS_COLLECTION,
+              from: collections.COMPLAINTS_COLLECTION,
               localField: "item",
               foreignField: "_id",
               as: "product",
@@ -337,7 +388,7 @@ module.exports = {
         // Get the workspace document to check the current seat value
         const workspaceDoc = await db.get()
           .collection(collections.WORKSPACE_COLLECTION)
-          .findOne({ _id: objectId(workspace._id) });
+          .findOne({ _id: ObjectId(workspace._id) });
 
         // Check if the workspace exists and the seat field is present
         if (!workspaceDoc || !workspaceDoc.seat) {
@@ -363,7 +414,7 @@ module.exports = {
             Pincode: order.Pincode,
             selecteddate: order.selecteddate,
           },
-          userId: objectId(order.userId),
+          userId: ObjectId(order.userId),
           user: user,
           paymentMethod: order["payment-method"],
           workspace: workspace,
@@ -385,7 +436,7 @@ module.exports = {
         await db.get()
           .collection(collections.WORKSPACE_COLLECTION)
           .updateOne(
-            { _id: objectId(workspace._id) },
+            { _id: ObjectId(workspace._id) },
             { $set: { seat: seatCount.toString() } } // Convert number back to string
           );
 
@@ -422,7 +473,7 @@ module.exports = {
           .collection(collections.ORDER_COLLECTION)
           .aggregate([
             {
-              $match: { _id: objectId(orderId) }, // Match the order by its ID
+              $match: { _id: ObjectId(orderId) }, // Match the order by its ID
             },
             {
               $project: {
@@ -486,7 +537,7 @@ module.exports = {
       db.get()
         .collection(collections.ORDER_COLLECTION)
         .updateOne(
-          { _id: objectId(orderId) },
+          { _id: ObjectId(orderId) },
           {
             $set: {
               "orderObject.status": "placed",
@@ -503,7 +554,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collections.ORDER_COLLECTION)
-        .removeOne({ _id: objectId(orderId) })
+        .removeOne({ _id: ObjectId(orderId) })
         .then(() => {
           resolve();
         });
@@ -514,11 +565,11 @@ module.exports = {
     console.log(details);
     return new Promise(async (resolve, reject) => {
       db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
+        .collection(collections.COMPLAINTS_COLLECTION)
         .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
-            .collection(collections.PRODUCTS_COLLECTION)
+            .collection(collections.COMPLAINTS_COLLECTION)
             .find({
               $text: {
                 $search: details.search,
