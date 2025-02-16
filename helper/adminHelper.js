@@ -2,7 +2,6 @@ var db = require("../config/connection");
 var collections = require("../config/collections");
 var bcrypt = require("bcrypt");
 const objectId = require("mongodb").ObjectID;
-<<<<<<< HEAD
 
 
 module.exports = {
@@ -153,21 +152,12 @@ sendNotification :async (userId, message) => {
       console.error("Error sending notification:", error);
   }
 },
-=======
-const { ObjectId } = require('mongodb'); // Import ObjectId for MongoDB
-
-module.exports = {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
   ///////ADD builder/////////////////////                                         
   addnotification: (notification, callback) => {
     console.log(notification);
 
-<<<<<<< HEAD
     // Convert userId to objectId if it's present
-=======
-    // Convert userId to ObjectId if it's present
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     if (notification.userId) {
       notification.userId = new objectId(notification.userId);
     }
@@ -267,23 +257,7 @@ module.exports = {
     });
   },
 
-<<<<<<< HEAD
  
-=======
-  ///////ADD builder DETAILS/////////////////////                                            
-  getbuilderDetails: (builderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.BUILDER_COLLECTION)
-        .findOne({
-          _id: objectId(builderId)
-        })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
   ///////DELETE builder/////////////////////                                            
   deletebuilder: (builderId) => {
@@ -342,11 +316,7 @@ module.exports = {
     console.log(product);
     product.Price = parseInt(product.Price);
     db.get()
-<<<<<<< HEAD
       .collection(collections.COMPLAINTS_COLLECTION)
-=======
-      .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       .insertOne(product)
       .then((data) => {
         console.log(data);
@@ -354,20 +324,7 @@ module.exports = {
       });
   },
 
-<<<<<<< HEAD
  
-=======
-  getAllProducts: () => {
-    return new Promise(async (resolve, reject) => {
-      let products = await db
-        .get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .find()
-        .toArray();
-      resolve(products);
-    });
-  },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
   doSignup: (adminData) => {
     return new Promise(async (resolve, reject) => {
@@ -414,11 +371,7 @@ module.exports = {
   getProductDetails: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .findOne({ _id: objectId(productId) })
         .then((response) => {
           resolve(response);
@@ -429,11 +382,7 @@ module.exports = {
   deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .removeOne({ _id: objectId(productId) })
         .then((response) => {
           console.log(response);
@@ -445,11 +394,7 @@ module.exports = {
   updateProduct: (productId, productDetails) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .updateOne(
           { _id: objectId(productId) },
           {
@@ -470,11 +415,7 @@ module.exports = {
   deleteAllProducts: () => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .remove({})
         .then(() => {
           resolve();
@@ -514,21 +455,12 @@ module.exports = {
   blockUser: (userId) => {
     return new Promise((resolve, reject) => {
       try {
-<<<<<<< HEAD
         // Convert the userId to objectId if it's not already
         const objectId = new objectId(userId);
 
         // Use updateOne to set isDisable to true
         db.get().collection(collections.USERS_COLLECTION).updateOne(
           { _id: objectId }, // Find user by objectId
-=======
-        // Convert the userId to ObjectId if it's not already
-        const objectId = new ObjectId(userId);
-
-        // Use updateOne to set isDisable to true
-        db.get().collection(collections.USERS_COLLECTION).updateOne(
-          { _id: objectId }, // Find user by ObjectId
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           { $set: { isDisable: true } }, // Set the isDisable field to true
           (err, result) => {
             if (err) {
@@ -539,11 +471,7 @@ module.exports = {
           }
         );
       } catch (err) {
-<<<<<<< HEAD
         reject(err); // Catch any error in case of an invalid objectId format
-=======
-        reject(err); // Catch any error in case of an invalid ObjectId format
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       }
     });
   },
@@ -654,19 +582,11 @@ module.exports = {
     console.log(details);
     return new Promise(async (resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
         .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
             .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
-        .createIndex({ Name: "text" }).then(async () => {
-          let result = await db
-            .get()
-            .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
             .find({
               $text: {
                 $search: details.search,

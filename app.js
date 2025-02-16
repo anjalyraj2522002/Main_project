@@ -4,10 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var hbs = require("express-handlebars");
-<<<<<<< HEAD
 const moment = require("moment");
-=======
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 var usersRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
 var govtRouter = require("./routes/govt");
@@ -39,7 +36,6 @@ app.engine(
         index++;
         return index;
       },
-<<<<<<< HEAD
       formatDateTime:(dateTime) => {
         return moment(dateTime).format("DD-MM-YY hh:mm A"); 
     },
@@ -48,8 +44,6 @@ app.engine(
           const today = moment();
           return today.diff(givenDate, "days");
       },
-=======
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       eq: function (a, b) {
         return a === b;
       },
