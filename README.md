@@ -1,4 +1,3 @@
-<<<<<<< HEAD
                                 E-District Grievance Management
                 The *e-District portal project for Pattambi Taluk* is designed to make filing and resolving complaints about government services simple and efficient. 
                 Citizens can submit complaints through the online portal, providing details about their issues along with various supporting methods, such as uploading
@@ -8,6 +7,3 @@
                 assistance. The system integrates with government departments to streamline communication and ensure faster resolutions. By offering multiple ways to 
                 file complaints and focusing on transparency, this project ensures that every resident in Pattambi Taluk can easily raise their concerns and receive
                 timely solutions.
-=======
-# workspace-management
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc

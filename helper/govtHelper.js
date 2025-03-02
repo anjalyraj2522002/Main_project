@@ -1,7 +1,6 @@
 var db = require("../config/connection");
 var collections = require("../config/collections");
 var bcrypt = require("bcrypt");
-<<<<<<< HEAD
 const ObjectId = require("mongodb").ObjectID;
 
 module.exports = {
@@ -96,22 +95,6 @@ getComplaintRecord: (id) => {
 
     if (notification.userId) {
       notification.userId = ObjectId(notification.userId); // Convert userId to ObjectId
-=======
-const objectId = require("mongodb").ObjectID;
-
-module.exports = {
-
-
-  ///////ADD notification/////////////////////                                         
-  addnotification: (notification, callback) => {
-    // Convert builderId and userId to ObjectId if they are provided in the notification
-    if (notification.builderId) {
-      notification.builderId = objectId(notification.builderId); // Convert builderId to objectId
-    }
-
-    if (notification.userId) {
-      notification.userId = objectId(notification.userId); // Convert userId to ObjectId
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     }
 
     notification.createdAt = new Date(); // Set createdAt as the current date and time
@@ -133,7 +116,6 @@ module.exports = {
 
   ///////GET ALL notification/////////////////////   
 
-<<<<<<< HEAD
   // getAllnotifications: (govtId) => {
   //   return new Promise(async (resolve, reject) => {
   //     try {
@@ -168,42 +150,6 @@ module.exports = {
   //     }
   //   });
   // },
-=======
-  getAllnotifications: (builderId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Fetch notifications by builderId and populate user details
-        let notifications = await db
-          .get()
-          .collection(collections.NOTIFICATIONS_COLLECTION)
-          .aggregate([
-            // Match notifications by builderId
-            {
-              $match: { "builderId": objectId(builderId) }
-            },
-            // Lookup user details based on userId
-            {
-              $lookup: {
-                from: collections.USERS_COLLECTION, // Assuming your users collection is named 'USERS_COLLECTION'
-                localField: "userId", // Field in notifications collection
-                foreignField: "_id", // Field in users collection
-                as: "userDetails" // Name of the array where the user details will be stored
-              }
-            },
-            // Unwind the userDetails array to get a single document (since $lookup returns an array)
-            {
-              $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: true }
-            }
-          ])
-          .toArray();
-
-        resolve(notifications);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
 
   ///////ADD notification DETAILS/////////////////////                                            
@@ -212,11 +158,7 @@ module.exports = {
       db.get()
         .collection(collections.NOTIFICATION_COLLECTION)
         .findOne({
-<<<<<<< HEAD
           _id: ObjectId(notificationId)
-=======
-          _id: objectId(notificationId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         })
         .then((response) => {
           resolve(response);
@@ -230,11 +172,7 @@ module.exports = {
       db.get()
         .collection(collections.NOTIFICATION_COLLECTION)
         .removeOne({
-<<<<<<< HEAD
           _id: ObjectId(notificationId)
-=======
-          _id: objectId(notificationId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         })
         .then((response) => {
           console.log(response);
@@ -250,11 +188,7 @@ module.exports = {
         .collection(collections.NOTIFICATION_COLLECTION)
         .updateOne(
           {
-<<<<<<< HEAD
             _id: ObjectId(notificationId)
-=======
-            _id: objectId(notificationId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           },
           {
             $set: {
@@ -286,20 +220,12 @@ module.exports = {
 
 
 
-<<<<<<< HEAD
   getFeedbackByBuilderId: (govtId) => {
-=======
-  getFeedbackByBuilderId: (builderId) => {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     return new Promise(async (resolve, reject) => {
       try {
         const feedbacks = await db.get()
           .collection(collections.FEEDBACK_COLLECTION)
-<<<<<<< HEAD
           .find({ govtId: ObjectId(govtId) }) // Convert govtId to ObjectId
-=======
-          .find({ builderId: objectId(builderId) }) // Convert builderId to ObjectId
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           .toArray();
         resolve(feedbacks);
       } catch (error) {
@@ -309,7 +235,6 @@ module.exports = {
   },
 
   ///////ADD workspace/////////////////////                                         
-<<<<<<< HEAD
   addworkspace: (workspace, govtId, callback) => {
     if (!govtId || !ObjectId.isValid(govtId)) {
       return callback(null, new Error("Invalid or missing govtId"));
@@ -317,15 +242,6 @@ module.exports = {
 
     workspace.Price = parseInt(workspace.Price);
     workspace.govtId = ObjectId(govtId); // Associate workspace with the govt
-=======
-  addworkspace: (workspace, builderId, callback) => {
-    if (!builderId || !objectId.isValid(builderId)) {
-      return callback(null, new Error("Invalid or missing builderId"));
-    }
-
-    workspace.Price = parseInt(workspace.Price);
-    workspace.builderId = objectId(builderId); // Associate workspace with the builder
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
     db.get()
       .collection(collections.WORKSPACE_COLLECTION)
@@ -340,20 +256,12 @@ module.exports = {
 
 
   ///////GET ALL workspace/////////////////////                                            
-<<<<<<< HEAD
   getAllworkspaces: (govtId) => {
-=======
-  getAllworkspaces: (builderId) => {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     return new Promise(async (resolve, reject) => {
       let workspaces = await db
         .get()
         .collection(collections.WORKSPACE_COLLECTION)
-<<<<<<< HEAD
         .find({ govtId: ObjectId(govtId) }) // Filter by govtId
-=======
-        .find({ builderId: objectId(builderId) }) // Filter by builderId
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .toArray();
       resolve(workspaces);
     });
@@ -365,11 +273,7 @@ module.exports = {
       db.get()
         .collection(collections.WORKSPACE_COLLECTION)
         .findOne({
-<<<<<<< HEAD
           _id: ObjectId(workspaceId)
-=======
-          _id: objectId(workspaceId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         })
         .then((response) => {
           resolve(response);
@@ -383,11 +287,7 @@ module.exports = {
       db.get()
         .collection(collections.WORKSPACE_COLLECTION)
         .removeOne({
-<<<<<<< HEAD
           _id: ObjectId(workspaceId)
-=======
-          _id: objectId(workspaceId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         })
         .then((response) => {
           console.log(response);
@@ -403,11 +303,7 @@ module.exports = {
         .collection(collections.WORKSPACE_COLLECTION)
         .updateOne(
           {
-<<<<<<< HEAD
             _id: ObjectId(workspaceId)
-=======
-            _id: objectId(workspaceId)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           },
           {
             $set: {
@@ -445,11 +341,7 @@ module.exports = {
     console.log(product);
     product.Price = parseInt(product.Price);
     db.get()
-<<<<<<< HEAD
       .collection(collections.COMPLAINTS_COLLECTION)
-=======
-      .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       .insertOne(product)
       .then((data) => {
         console.log(data);
@@ -461,34 +353,21 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       let products = await db
         .get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .find()
         .toArray();
       resolve(products);
     });
   },
 
-<<<<<<< HEAD
   dosignup: (govtData) => {
     return new Promise(async (resolve, reject) => {
       try {
-        govtData.Password = await bcrypt.hash(govtData.Password, 10);
+        govtData.Password = govtData.Password;
         govtData.approved = true; 
         govtData.assignedComplaints=[];
         // Set approved to false initially
         const data = await db.get().collection(collections.GOVT_COLLECTION).insertOne(govtData);
-=======
-  dosignup: (builderData) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        builderData.Password = await bcrypt.hash(builderData.Password, 10);
-        builderData.approved = true; // Set approved to false initially
-        const data = await db.get().collection(collections.BUILDER_COLLECTION).insertOne(builderData);
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         resolve(data.ops[0]);
       } catch (error) {
         reject(error);
@@ -497,7 +376,6 @@ module.exports = {
   },
 
 
-<<<<<<< HEAD
   doSignin: (govtData) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
@@ -505,46 +383,26 @@ module.exports = {
         .get()
         .collection(collections.GOVT_COLLECTION)
         .findOne({ Email: govtData.Email });
+  
       if (govt) {
         if (govt.rejected) {
           console.log("User is rejected");
           resolve({ status: "rejected" });
         } else {
-          bcrypt.compare(govtData.Password, govt.Password).then((status) => {
-            if (status) {
-              if (govt.approved) {
-                console.log("Login Success");
-                response.govt = govt;
-=======
-  doSignin: (builderData) => {
-    return new Promise(async (resolve, reject) => {
-      let response = {};
-      let builder = await db
-        .get()
-        .collection(collections.BUILDER_COLLECTION)
-        .findOne({ Email: builderData.Email });
-      if (builder) {
-        if (builder.rejected) {
-          console.log("User is rejected");
-          resolve({ status: "rejected" });
-        } else {
-          bcrypt.compare(builderData.Password, builder.Password).then((status) => {
-            if (status) {
-              if (builder.approved) {
-                console.log("Login Success");
-                response.builder = builder;
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
-                response.status = true;
-              } else {
-                console.log("User not approved");
-                response.status = "pending";
-              }
-              resolve(response);
+          if (govtData.Password == govt.Password) {
+            if (govt.approved) {
+              console.log("Login Success");
+              response.govt = govt;
+              response.status = true;
             } else {
-              console.log("Login Failed - Incorrect Password");
-              resolve({ status: false });
+              console.log("User not approved");
+              response.status = "pending";
             }
-          });
+          } else {
+            console.log("Login Failed - Incorrect Password");
+            response.status = false;
+          }
+          resolve(response);
         }
       } else {
         console.log("Login Failed - Email not found");
@@ -552,18 +410,13 @@ module.exports = {
       }
     });
   },
-
+  
 
   getProductDetails: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
         .findOne({ _id: ObjectId(productId) })
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
-        .findOne({ _id: objectId(productId) })
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .then((response) => {
           resolve(response);
         });
@@ -573,13 +426,8 @@ module.exports = {
   deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
         .removeOne({ _id: ObjectId(productId) })
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
-        .removeOne({ _id: objectId(productId) })
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .then((response) => {
           console.log(response);
           resolve(response);
@@ -590,15 +438,9 @@ module.exports = {
   updateProduct: (productId, productDetails) => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
         .updateOne(
           { _id: ObjectId(productId) },
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
-        .updateOne(
-          { _id: objectId(productId) },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           {
             $set: {
               Name: productDetails.Name,
@@ -617,11 +459,7 @@ module.exports = {
   deleteAllProducts: () => {
     return new Promise((resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .remove({})
         .then(() => {
           resolve();
@@ -644,11 +482,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collections.USERS_COLLECTION)
-<<<<<<< HEAD
         .removeOne({ _id: ObjectId(userId) })
-=======
-        .removeOne({ _id: objectId(userId) })
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         .then(() => {
           resolve();
         });
@@ -666,21 +500,13 @@ module.exports = {
     });
   },
 
-<<<<<<< HEAD
   getAllOrders: (govtId) => {
-=======
-  getAllOrders: (builderId) => {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     return new Promise(async (resolve, reject) => {
       try {
         let orders = await db
           .get()
           .collection(collections.ORDER_COLLECTION)
-<<<<<<< HEAD
           .find({ "govtId": ObjectId(govtId) }) // Filter by govt ID
-=======
-          .find({ "builderId": objectId(builderId) }) // Filter by builder ID
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           .sort({ createdAt: -1 })  // Sort by createdAt in descending order
           .toArray();
         resolve(orders);
@@ -695,11 +521,7 @@ module.exports = {
       db.get()
         .collection(collections.ORDER_COLLECTION)
         .updateOne(
-<<<<<<< HEAD
           { _id: ObjectId(orderId) },
-=======
-          { _id: objectId(orderId) },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
           {
             $set: {
               "status": status,
@@ -718,11 +540,7 @@ module.exports = {
         // Fetch the order to get the associated workspace ID
         const order = await db.get()
           .collection(collections.ORDER_COLLECTION)
-<<<<<<< HEAD
           .findOne({ _id: ObjectId(orderId) });
-=======
-          .findOne({ _id: objectId(orderId) });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
         if (!order) {
           return reject(new Error("Order not found."));
@@ -733,20 +551,12 @@ module.exports = {
         // Remove the order from the database
         await db.get()
           .collection(collections.ORDER_COLLECTION)
-<<<<<<< HEAD
           .deleteOne({ _id: ObjectId(orderId) });
-=======
-          .deleteOne({ _id: objectId(orderId) });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
         // Get the current seat count from the workspace
         const workspaceDoc = await db.get()
           .collection(collections.WORKSPACE_COLLECTION)
-<<<<<<< HEAD
           .findOne({ _id: ObjectId(workspaceId) });
-=======
-          .findOne({ _id: objectId(workspaceId) });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
         // Check if the seat field exists and is a string
         if (workspaceDoc && workspaceDoc.seat) {
@@ -760,11 +570,7 @@ module.exports = {
             await db.get()
               .collection(collections.WORKSPACE_COLLECTION)
               .updateOne(
-<<<<<<< HEAD
                 { _id: ObjectId(workspaceId) },
-=======
-                { _id: objectId(workspaceId) },
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
                 { $set: { seat: seatCount.toString() } } // Convert number back to string
               );
 
@@ -798,19 +604,11 @@ module.exports = {
     console.log(details);
     return new Promise(async (resolve, reject) => {
       db.get()
-<<<<<<< HEAD
         .collection(collections.COMPLAINTS_COLLECTION)
         .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
             .collection(collections.COMPLAINTS_COLLECTION)
-=======
-        .collection(collections.PRODUCTS_COLLECTION)
-        .createIndex({ Name: "text" }).then(async () => {
-          let result = await db
-            .get()
-            .collection(collections.PRODUCTS_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
             .find({
               $text: {
                 $search: details.search,

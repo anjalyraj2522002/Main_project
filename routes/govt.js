@@ -11,11 +11,7 @@ const ObjectId = require("mongodb").ObjectID;
 
 
 const verifySignedIn = (req, res, next) => {
-<<<<<<< HEAD
   if (req.session.signedInGovt) {
-=======
-  if (req.session.signedInBuilder) {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     next();
   } else {
     res.redirect("/govt/signin");
@@ -24,7 +20,6 @@ const verifySignedIn = (req, res, next) => {
 
 /* GET admins listing. */
 router.get("/", verifySignedIn, function (req, res, next) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   govtHelper.getAllAssingedComlaints(govt._id).then((cmp) => {
       console.log(cmp)
@@ -126,36 +121,6 @@ router.get("/complaint-record/:id", async (req, res) => {
 router.get("/add-notification", verifySignedIn, function (req, res) {
   let govt = req.session.govt;
   res.render("govt/all-notifications", { govt: true, layout: "layout", govt });
-=======
-  let builder = req.session.builder;
-  res.render("govt/home", { builder: true, layout: "layout", builder });
-});
-
-router.get("/home", verifySignedIn, function (req, res, next) {
-    console.log(req.session,"uuu")
-    let builder = req.session.builder;
-    res.render("govt/home", { builder: true, layout: "layout", builder });
-  });
-
-
-///////ALL notification/////////////////////                                         
-router.get("/all-notifications", verifySignedIn, async function (req, res) {
-  let builder = req.session.builder;
-
-  // Ensure you have the builder's ID available
-  let builderId = builder._id; // Adjust based on how builder ID is stored in session
-
-  // Pass builderId to getAllOrders
-  let orders = await govtHelper.getAllOrders(builderId);
-  let notifications = await govtHelper.getAllnotifications(builderId)
-  res.render("govt/all-notifications", { builder: true, layout: "layout", notifications, builder, orders });
-});
-
-///////ADD notification/////////////////////                                         
-router.get("/add-notification", verifySignedIn, function (req, res) {
-  let builder = req.session.builder;
-  res.render("govt/all-notifications", { builder: true, layout: "layout", builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 ///////ADD notification/////////////////////                                         
@@ -174,19 +139,11 @@ router.get("/delete-notification/:id", verifySignedIn, function (req, res) {
 
 ///////EDIT notification/////////////////////                                         
 router.get("/edit-notification/:id", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   let notificationId = req.params.id;
   let notification = await govtHelper.getnotificationDetails(notificationId);
   console.log(notification);
   res.render("govt/edit-notification", { govt: true, layout: "layout", notification, govt });
-=======
-  let builder = req.session.builder;
-  let notificationId = req.params.id;
-  let notification = await govtHelper.getnotificationDetails(notificationId);
-  console.log(notification);
-  res.render("govt/edit-notification", { builder: true, layout: "layout", notification, builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 ///////EDIT notification/////////////////////                                         
@@ -221,23 +178,17 @@ router.get("/delete-all-notifications", verifySignedIn, function (req, res) {
 
 ////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   res.render("govt/profile", { govt: true, layout: "layout", govt });
-=======
-  let builder = req.session.builder;
-  res.render("govt/profile", { builder: true, layout: "layout", builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
+
+
+
 
 
 ///////ALL workspace/////////////////////                                         
 // router.get("/all-feedbacks", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
 //   let govt = req.session.govt;
-=======
-//   let builder = req.session.builder;
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
 //   const workspaceId = req.params.id;
 
@@ -247,11 +198,7 @@ router.get("/profile", async function (req, res, next) {
 //     const workspace = await userHelper.getWorkspaceById(workspaceId);
 //     const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
 //     console.log('feedbacks', feedbacks)
-<<<<<<< HEAD
 //     res.render("govt/all-feedbacks", { govt: true, layout: "layout", workspace, feedbacks, govt });
-=======
-//     res.render("govt/all-feedbacks", { builder: true, layout: "layout", workspace, feedbacks, builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 //   } catch (error) {
 //     console.error("Error fetching workspace:", error);
 //     res.status(500).send("Server Error");
@@ -260,28 +207,16 @@ router.get("/profile", async function (req, res, next) {
 // });
 
 
-<<<<<<< HEAD
 router.get("/govt-feedback", async function (req, res) {
   let govt = req.session.govt; // Get the govt from session
 
   if (!govt) {
-=======
-router.get("/builder-feedback", async function (req, res) {
-  let builder = req.session.builder; // Get the builder from session
-
-  if (!builder) {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     return res.status(403).send("Builder not logged in");
   }
 
   try {
-<<<<<<< HEAD
     // Fetch feedback for this govt
     const feedbacks = await govtHelper.getFeedbackByBuilderId(govt._id);
-=======
-    // Fetch feedback for this builder
-    const feedbacks = await govtHelper.getFeedbackByBuilderId(builder._id);
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
     // Fetch workspace details for each feedback
     const feedbacksWithWorkspaces = await Promise.all(feedbacks.map(async feedback => {
@@ -292,15 +227,9 @@ router.get("/builder-feedback", async function (req, res) {
       return feedback;
     }));
 
-<<<<<<< HEAD
     // Render the feedback page with govt, feedbacks, and workspace data
     res.render("govt/all-feedbacks", {
       govt,  // Builder details
-=======
-    // Render the feedback page with builder, feedbacks, and workspace data
-    res.render("govt/all-feedbacks", {
-      builder,  // Builder details
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       feedbacks: feedbacksWithWorkspaces // Feedback with workspace details
     });
   } catch (error) {
@@ -313,46 +242,26 @@ router.get("/builder-feedback", async function (req, res) {
 
 ///////ALL workspace/////////////////////                                         
 router.get("/all-workspaces", verifySignedIn, function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   govtHelper.getAllworkspaces(req.session.govt._id).then((workspaces) => {
     res.render("govt/all-workspaces", { govt: true, layout: "layout", workspaces, govt });
-=======
-  let builder = req.session.builder;
-  govtHelper.getAllworkspaces(req.session.builder._id).then((workspaces) => {
-    res.render("govt/all-workspaces", { builder: true, layout: "layout", workspaces, builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 
 ///////ADD workspace/////////////////////                                         
 router.get("/add-workspace", verifySignedIn, function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   res.render("govt/add-workspace", { govt: true, layout: "layout", govt });
-=======
-  let builder = req.session.builder;
-  res.render("govt/add-workspace", { builder: true, layout: "layout", builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 ///////ADD workspace/////////////////////                                         
 router.post("/add-workspace", function (req, res) {
-<<<<<<< HEAD
   // Ensure the govt is signed in and their ID is available
   if (req.session.signedInGovt && req.session.govt && req.session.govt._id) {
     const govtId = req.session.govt._id; // Get the govt's ID from the session
 
     // Pass the govtId to the addworkspace function
     govtHelper.addworkspace(req.body, govtId, (workspaceId, error) => {
-=======
-  // Ensure the builder is signed in and their ID is available
-  if (req.session.signedInBuilder && req.session.builder && req.session.builder._id) {
-    const builderId = req.session.builder._id; // Get the builder's ID from the session
-
-    // Pass the builderId to the addworkspace function
-    govtHelper.addworkspace(req.body, builderId, (workspaceId, error) => {
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       if (error) {
         console.log("Error adding workspace:", error);
         res.status(500).send("Failed to add workspace");
@@ -369,11 +278,7 @@ router.post("/add-workspace", function (req, res) {
       }
     });
   } else {
-<<<<<<< HEAD
     // If the govt is not signed in, redirect to the sign-in page
-=======
-    // If the builder is not signed in, redirect to the sign-in page
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     res.redirect("/govt/signin");
   }
 });
@@ -381,19 +286,11 @@ router.post("/add-workspace", function (req, res) {
 
 ///////EDIT workspace/////////////////////                                         
 router.get("/edit-workspace/:id", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   let workspaceId = req.params.id;
   let workspace = await govtHelper.getworkspaceDetails(workspaceId);
   console.log(workspace);
   res.render("govt/edit-workspace", { govt: true, layout: "layout", workspace, govt });
-=======
-  let builder = req.session.builder;
-  let workspaceId = req.params.id;
-  let workspace = await govtHelper.getworkspaceDetails(workspaceId);
-  console.log(workspace);
-  res.render("govt/edit-workspace", { builder: true, layout: "layout", workspace, builder });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 ///////EDIT workspace/////////////////////                                         
@@ -428,7 +325,6 @@ router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
 
 
 router.get("/all-users", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
 
   // Ensure you have the govt's ID available
@@ -442,26 +338,10 @@ router.get("/all-users", verifySignedIn, async function (req, res) {
     layout: "layout",
     orders,
     govt
-=======
-  let builder = req.session.builder;
-
-  // Ensure you have the builder's ID available
-  let builderId = builder._id; // Adjust based on how builder ID is stored in session
-
-  // Pass builderId to getAllOrders
-  let orders = await govtHelper.getAllOrders(builderId);
-
-  res.render("govt/all-users", {
-    builder: true,
-    layout: "layout",
-    orders,
-    builder
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 
 router.get("/all-transactions", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
 
   // Ensure you have the govt's ID available
@@ -475,57 +355,26 @@ router.get("/all-transactions", verifySignedIn, async function (req, res) {
     layout: "layout",
     orders,
     govt
-=======
-  let builder = req.session.builder;
-
-  // Ensure you have the builder's ID available
-  let builderId = builder._id; // Adjust based on how builder ID is stored in session
-
-  // Pass builderId to getAllOrders
-  let orders = await govtHelper.getAllOrders(builderId);
-
-  res.render("govt/all-transactions", {
-    builder: true,
-    layout: "layout",
-    orders,
-    builder
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 
 router.get("/pending-approval", function (req, res) {
-<<<<<<< HEAD
   if (!req.session.signedInGovt || req.session.govt.approved) {
     res.redirect("/govt");
   } else {
     res.render("govt/pending-approval", {
       govt: true, layout: "empty",
-=======
-  if (!req.session.signedInBuilder || req.session.builder.approved) {
-    res.redirect("/builder");
-  } else {
-    res.render("govt/pending-approval", {
-      builder: true, layout: "empty",
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     });
   }
 });
 
 
 router.get("/signup", function (req, res) {
-<<<<<<< HEAD
   if (req.session.signedInGovt) {
     res.redirect("/govt");
   } else {
     res.render("govt/signup", {
       govt: true, layout: "empty",
-=======
-  if (req.session.signedInBuilder) {
-    res.redirect("/govt");
-  } else {
-    res.render("govt/signup", {
-      builder: true, layout: "empty",
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       signUpErr: req.session.signUpErr,
     });
   }
@@ -546,20 +395,12 @@ router.post("/signup", async function (req, res) {
 
   // Check if email or company name already exists
   const existingEmail = await db.get()
-<<<<<<< HEAD
     .collection(collections.GOVT_COLLECTION)
-=======
-    .collection(collections.BUILDER_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     .findOne({ Email });
   if (existingEmail) errors.email = "This email is already registered.";
 
   const existingCompanyname = await db.get()
-<<<<<<< HEAD
     .collection(collections.GOVT_COLLECTION)
-=======
-    .collection(collections.BUILDER_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     .findOne({ Name });
 //   if (existingCompanyname) errors.Companyname = "This company name is already registered.";
 
@@ -567,22 +408,14 @@ router.post("/signup", async function (req, res) {
 //   if (!/^\d{6}$/.test(Pincode)) errors.pincode = "Pincode must be exactly 6 digits.";
   if (!/^\d{10}$/.test(Phone)) errors.phone = "Phone number must be exactly 10 digits.";
   const existingPhone = await db.get()
-<<<<<<< HEAD
     .collection(collections.GOVT_COLLECTION)
-=======
-    .collection(collections.BUILDER_COLLECTION)
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     .findOne({ Phone });
   if (existingPhone) errors.phone = "This phone number is already registered.";
 
   // If there are validation errors, re-render the form
   if (Object.keys(errors).length > 0) {
     return res.render("govt/signup", {
-<<<<<<< HEAD
       govt: true,
-=======
-      builder: true,
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       layout: 'empty',
       errors,
       Name,
@@ -605,11 +438,7 @@ router.post("/signup", async function (req, res) {
     res.redirect("/govt/signin")
 
     // Ensure the images directory exists
-<<<<<<< HEAD
     // const imageDir = "./public/images/govt-images/";
-=======
-    // const imageDir = "./public/images/builder-images/";
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     // if (!fs.existsSync(imageDir)) {
     //   fs.mkdirSync(imageDir, { recursive: true });
     // }
@@ -624,13 +453,8 @@ router.post("/signup", async function (req, res) {
     //   image.mv(imagePath, (err) => {
     //     if (!err) {
     //       // On successful image upload, redirect to pending approval
-<<<<<<< HEAD
     //       req.session.signedInGovt = true;
     //       req.session.govt = response;
-=======
-    //       req.session.signedInBuilder = true;
-    //       req.session.builder = response;
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     //       res.redirect("/govt/pending-approval");
     //     } else {
     //       console.log("Error saving image:", err);  // Log any errors
@@ -639,13 +463,8 @@ router.post("/signup", async function (req, res) {
     //   });
     // } else {
     //   // No image uploaded, proceed without it
-<<<<<<< HEAD
     //   req.session.signedInGovt = true;
     //   req.session.govt = response;
-=======
-    //   req.session.signedInBuilder = true;
-    //   req.session.builder = response;
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
     //   res.redirect("/govt/pending-approval");
     // }
   }).catch((err) => {
@@ -656,19 +475,11 @@ router.post("/signup", async function (req, res) {
 
 
   router.get("/signin", function (req, res) {
-<<<<<<< HEAD
     if (req.session.signedInGovt) {
       res.redirect("/govt");
     } else {
       res.render("govt/signin", {
         govt: true, layout: "empty",
-=======
-    if (req.session.signedInBuilder) {
-      res.redirect("/govt");
-    } else {
-      res.render("govt/signin", {
-        builder: true, layout: "empty",
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         signInErr: req.session.signInErr,
       });
       req.session.signInErr = null;
@@ -687,13 +498,8 @@ router.post("/signin", function (req, res) {
   govtHelper.doSignin(req.body)
     .then((response) => {
       if (response.status === true) {
-<<<<<<< HEAD
         req.session.signedInGovt = true;
         req.session.govt = response.govt;
-=======
-        req.session.signedInBuilder = true;
-        req.session.builder = response.builder;
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
         res.redirect("/govt/home");
       } else if (response.status === "pending") {
         req.session.signInErr = "This user is not approved by admin, please wait.";
@@ -717,7 +523,6 @@ router.post("/signin", function (req, res) {
 
 
 router.get("/signout", function (req, res) {
-<<<<<<< HEAD
   req.session.signedInGovt = false;
   req.session.govt = null;
   res.redirect("/govt");
@@ -726,16 +531,6 @@ router.get("/signout", function (req, res) {
 router.get("/add-product", verifySignedIn, function (req, res) {
   let govt = req.session.govt;
   res.render("govt/add-product", { govt: true, layout: "layout", workspace });
-=======
-  req.session.signedInBuilder = false;
-  req.session.builder = null;
-  res.redirect("/builder");
-});
-
-router.get("/add-product", verifySignedIn, function (req, res) {
-  let builder = req.session.builder;
-  res.render("govt/add-product", { builder: true, layout: "layout", workspace });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 router.post("/add-product", function (req, res) {
@@ -752,19 +547,11 @@ router.post("/add-product", function (req, res) {
 });
 
 router.get("/edit-product/:id", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   let productId = req.params.id;
   let product = await govtHelper.getProductDetails(productId);
   console.log(product);
   res.render("govt/edit-product", { govt: true, layout: "layout", product, workspace });
-=======
-  let builder = req.session.builder;
-  let productId = req.params.id;
-  let product = await govtHelper.getProductDetails(productId);
-  console.log(product);
-  res.render("govt/edit-product", { builder: true, layout: "layout", product, workspace });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 router.post("/edit-product/:id", verifySignedIn, function (req, res) {
@@ -795,15 +582,9 @@ router.get("/delete-all-products", verifySignedIn, function (req, res) {
 });
 
 router.get("/all-users", verifySignedIn, function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   govtHelper.getAllUsers().then((users) => {
     res.render("govt/users/all-users", { govt: true, layout: "layout", workspace, users });
-=======
-  let builder = req.session.builder;
-  govtHelper.getAllUsers().then((users) => {
-    res.render("govt/users/all-users", { builder: true, layout: "layout", workspace, users });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 
@@ -821,7 +602,6 @@ router.get("/remove-all-users", verifySignedIn, function (req, res) {
 });
 
 router.get("/all-orders", verifySignedIn, async function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
 
   // Ensure you have the govt's ID available
@@ -835,21 +615,6 @@ router.get("/all-orders", verifySignedIn, async function (req, res) {
     layout: "layout",
     orders,
     govt
-=======
-  let builder = req.session.builder;
-
-  // Ensure you have the builder's ID available
-  let builderId = builder._id; // Adjust based on how builder ID is stored in session
-
-  // Pass builderId to getAllOrders
-  let orders = await govtHelper.getAllOrders(builderId);
-
-  res.render("govt/all-orders", {
-    builder: true,
-    layout: "layout",
-    orders,
-    builder
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 
@@ -857,19 +622,11 @@ router.get(
   "/view-ordered-products/:id",
   verifySignedIn,
   async function (req, res) {
-<<<<<<< HEAD
     let govt = req.session.govt;
     let orderId = req.params.id;
     let products = await userHelper.getOrderProducts(orderId);
     res.render("govt/order-products", {
       govt: true, layout: "layout",
-=======
-    let builder = req.session.builder;
-    let orderId = req.params.id;
-    let products = await userHelper.getOrderProducts(orderId);
-    res.render("govt/order-products", {
-      builder: true, layout: "layout",
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
       workspace,
       products,
     });
@@ -898,15 +655,9 @@ router.get("/cancel-all-orders", verifySignedIn, function (req, res) {
 });
 
 router.post("/search", verifySignedIn, function (req, res) {
-<<<<<<< HEAD
   let govt = req.session.govt;
   govtHelper.searchProduct(req.body).then((response) => {
     res.render("govt/search-result", { govt: true, layout: "layout", workspace, response });
-=======
-  let builder = req.session.builder;
-  govtHelper.searchProduct(req.body).then((response) => {
-    res.render("govt/search-result", { builder: true, layout: "layout", workspace, response });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
   });
 });
 

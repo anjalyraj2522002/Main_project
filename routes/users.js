@@ -4,11 +4,8 @@ var builderHelper = require("../helper/govtHelper");
 
 var router = express.Router();
 var db = require("../config/connection");
-<<<<<<< HEAD
 const fs = require("fs");
 const path = require("path");
-=======
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 var collections = require("../config/collections");
 const ObjectId = require("mongodb").ObjectID;
 
@@ -28,7 +25,6 @@ router.get("/", async function (req, res, next) {
   });
 });
 
-<<<<<<< HEAD
 ///////ADD complaint/////////////////////                                         
 router.get("/add-complaint", verifySignedIn, function (req, res) {
   let user = req.session.user;
@@ -102,8 +98,6 @@ router.post("/add-complaint", async (req, res) => {
     res.redirect("/complaint-placed");
   });
 });
-=======
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 
 router.get("/notifications", verifySignedIn, function (req, res) {
   let user = req.session.user;  // Get logged-in user from session
@@ -502,7 +496,6 @@ router.post("/verify-payment", async (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 router.get("/complaint-placed", verifySignedIn, async (req, res) => {
   let user = req.session.user;
   let userId = req.session.user._id;
@@ -516,21 +509,6 @@ router.get("/my-complaints", verifySignedIn, async function (req, res) {
   // Fetch user orders
   let cmp = await userHelper.getUserComplaint(userId);
   res.render("users/my-complaints", { admin: false, user, cmp});
-=======
-router.get("/order-placed", verifySignedIn, async (req, res) => {
-  let user = req.session.user;
-  let userId = req.session.user._id;
-  // le = await userHelper.g(userId);
-  res.render("users/order-placed", { admin: false, user });
-});
-
-router.get("/orders", verifySignedIn, async function (req, res) {
-  let user = req.session.user;
-  let userId = req.session.user._id;
-  // Fetch user orders
-  let orders = await userHelper.getUserOrder(userId);
-  res.render("users/orders", { admin: false, user, orders });
->>>>>>> 2fd49ae9eeb0ded19ffdfc56c750a14f765fbebc
 });
 
 router.get("/view-ordered-workspaces/:id", verifySignedIn, async function (req, res) {

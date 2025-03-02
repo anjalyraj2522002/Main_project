@@ -1,58 +1,117 @@
 <!-- Login Wrapper Area -->
-<div class="  page-content-wrapper main-content">
-    <div class="container-lg">
-        <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div>
-        <!-- Register Form -->
 
-        <div class="d-flex justify-content-between">
-            <a href="/builder" class="btn btn-sm btn-dark">
+
+<div class="page-content-wrapper main-content">
+    <div class="pt-3"></div>
+    <div class="container-lg direction-rtl">
+        <h5 class="mb-3"> Welcome To Government official Dashboard</h5>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-4">
+                        <a href="/govt/#">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <p class="mb-0">Manage Complaint</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="/builder/all-workspaces">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue"
+                                        class="bi bi-pc-display" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1zm1 13.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0M9.5 1a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM9 3.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5M1.5 2A1.5 1.5 0 0 0 0 3.5v7A1.5 1.5 0 0 0 1.5 12H6v2h-.5a.5.5 0 0 0 0 1H7v-4H1.5a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H7V2z" />
+                                    </svg>
+                                </div>
+                                <p class="mb-0">Meeting request</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="#!">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray"><i class="bi bi-wallet2 text-primary"></i></div>
+                                <p class="mb-0">Notifications</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-lg">
+        <div class="card">
+            <div class="card-body">
+                     <div class="d-flex justify-content-between">
+            <a href="/govt" class="btn btn-sm btn-dark">
                 <i class="bi bi-arrow-left-short "></i> Back</a>
-            {{#if builder}}
-            {{!-- <a href="/edit-profile/{{builder._id}}" class="btn btn-sm btn-primary">
-                <i class="bi bi-pen "></i> Edit Profile</a> --}}
+            {{#if govt}}
+            <a href="govt/edit-profile/{{govt._id}}" class="btn btn-sm btn-primary">
+                <i class="bi bi-pen "></i> Edit Profile</a>
             {{/if}}
         </div>
-
-        <div class="card shadow p-4 mt-3">
+                <div class="card shadow p-4 mt-3">
 
             <div class="register-form mt-4">
                 <h4 class="mb-5 text-left">My Profile</h4>
-                {{#if builder}}
-                <form action="#!" method="">
-                    <img src="/images/builder-images/{{builder._id}}.png" width="10%" style="border-radius: 100px;"
-                        class="mb-4">
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="Companyname" value={{builder.Companyname}}
-                            readonly>
-                    </div>
-            </div>
+
+                  {{#if govt}}
+        <form action="#!" method="">
             <div class="form-group">
-                <input class="form-control" type="email" name="Email" value={{builder.Email}} readonly>
+                <label for="Name">Full Name</label>
+                <input class="form-control" type="text" id="Name" name="Name" value="{{govt.Name}}" readonly>
             </div>
+
             <div class="form-group">
-                <input class="form-control" type="number" name="Phone" value={{builder.Phone}} readonly>
+                <label for="Email">Email</label>
+                <input class="form-control" type="email" id="Email" name="Email" value="{{govt.Email}}" readonly>
             </div>
+
             <div class="form-group">
-                <textarea class="form-control" name="Address" readonly>{{builder.Address}} </textarea>
+                <label for="Phone">Phone Number</label>
+                <input class="form-control" type="number" id="Phone" name="Phone" value="{{govt.Phone}}" readonly>
             </div>
+
+            <div class="form-group">
+                <label for="Designation">Designation</label>
+                <input class="form-control" type="text" id="Designation" name="Designation" value="{{govt.Designation}}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="Department">Department</label>
+                <input class="form-control" type="text" id="Department" name="Department" value="{{govt.Department}}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="Address">Address</label>
+                <textarea class="form-control" id="Address" name="Address" readonly>{{govt.Address}}</textarea>
+            </div>
+
             <div class="row g-1">
                 <div class="col-lg-7">
                     <div class="form-group">
-                        <input class="form-control" type="text" name="City" value={{builder.City}} readonly>
+                        <label for="City">City</label>
+                        <input class="form-control" type="text" id="City" name="City" value="{{govt.City}}" readonly>
                     </div>
                 </div>
                 <div class="col-lg-5">
                     <div class="form-group">
-                        <input class="form-control" type="number" name="Pincode" value={{builder.Pincode}} readonly>
+                        <label for="Pincode">Pincode</label>
+                        <input class="form-control" type="number" id="Pincode" name="Pincode" value="{{govt.Pincode}}" readonly>
                     </div>
                 </div>
             </div>
-
-            </form>
-            {{/if}}
+        </form>
+        {{/if}}
         </div>
-
+            </div>
+        </div>
     </div>
+	<div class="pb-3"></div>
+</div>
 
-</div>
-</div>

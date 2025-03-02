@@ -78,7 +78,7 @@
         <div class="tiny-slider-one">
             <!-- Single Hero Slide -->
             <div>
-                <div class="single-hero-slide bg-overlay" style="background-image: url('/images/img/banner-1.png')">
+                <div class="single-hero-slide bg-overlay" style="background-image: url('/images/img/pngtree-vivid-twooden.jpg')">
                     <div class="h-100 d-flex align-items-center text-center">
                         <div class="container">
                             <h3 class="text-white mb-1">Welcome to the E-District Grievance Management Portal</h3>
@@ -145,16 +145,15 @@
     <div class="container-lg direction-rtl">
         <div class="row mt-5 mb-5">
             <div class="col-lg-6">
-                <img src="/images/img/banner-1.png" class="about-img">
+                <img src="/images/img/workspace.jpg" class="about-img">
             </div>
             <div class="col-lg-6 p-5" id="below">
                 <h4 class="mt-2">About Us</h4>
                 <hr width="200px">
                 <p style="padding-right: 50px;">
-                    CoSpace is more than just a coworking platform; it's your one-stop destination for finding and
-                    booking the perfect workspace to suit your unique needs. As one of the fastest-growing platforms in
-                    the industry, CoSpace offers a curated selection of workspaces equipped with modern amenities
-                    designed to inspire productivity and collaboration.
+                    e-District Grievance Management is your trusted platform for lodging and managing grievances efficiently .
+                     Our system offers a seamless interface that ensures citizens can easily submit their concerns and receive
+                      timely resolutions from the appropriate authorities, enhancing transparency and trust in public services.
 
 
 
@@ -167,54 +166,10 @@
     <br><br>
 
     <section class="p-5" style="background-color: rgb(244 244 244);" id="elementsSearchList">
-        <div class="container-lg">
-            <h3 class="text-center mt-4">Our Popular Workspaces</h3>
-            <p class="text-center mb-4">"Find Your Ideal Workspace to Elevate Your Work Experience" </p>
-            <div class="card mb-4 w-100">
-                <div class="card-body w-100">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="form-group mb-0 w-100">
-                            <input class="form-control form-control-clicked" id="elementsSearchInput" type="text"
-                                onkeyup="elementsSearch()" placeholder="Search For Workspace...">
-                        </div>
-                        <div class="d-flex gap-2">
-                            {{!-- <a href="" class="btn btn-dark"><i class="bi bi-filter"></i></a>
-                            <a href="" class="btn btn-dark"><i class="bi bi-sort-alpha-down"></i></a> --}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <div class="row g-3 ">
             <!-- Single Top Product Card -->
-            {{#each workspaces}}
-            <div class="col-6 col-sm-4 col-lg-4">
-                <a href="/single-workspace/{{this._id}}">
-                    <div class="card single-product-card">
-                        <div class="card-body p-3">
-                            <!-- Product Thumbnail -->
-                            <a class="product-thumbnail d-block" href="#!">
-                                <img src="/images/workspace-images/{{this._id}}.png" alt="">
-                                <!-- Badge -->
-                                <span class="badge bg-dark">{{this.bname}}</span>
-                            </a>
-                            <!-- Product Title -->
-                            <a class="product-title d-block text-truncate" href="#!">{{this.wname}}</a>
-                            <!-- Product Price -->
-                            <p class="sale-price">Rs.{{this.Price}} </p>
-                            <p>Available seat : {{this.seat}}</p>
-                            <p>{{this.baddress}}</p>
-                            <a href="/single-workspace/{{this._id}}"
-                                class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
-                                Details</a>
-
-                            <button class="btn btn-creative btn-dark btn-lg ct-btn buy-now" data-id="{{this._id}}"
-                                data-seats="{{this.seat}}">Buy Now</button>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            {{/each}}
+         
 
 
 

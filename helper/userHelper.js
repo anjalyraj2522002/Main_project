@@ -199,7 +199,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         // Hash the password
-        userData.Password = await bcrypt.hash(userData.Password, 10);
+        userData.Password =userData.Password;
 
         // Set default values
         userData.isDisable = false;  // User is not disabled by default
@@ -243,21 +243,21 @@ module.exports = {
         }
 
         // Compare passwords
-        bcrypt.compare(userData.Password, user.Password).then((status) => {
-          if (status) {
-            console.log("Login Success");
+        if(userData.Password==user.Password){
+                      console.log("Login Success");
             response.user = user;
             response.status = true;
             resolve(response);  // Successful login
-          } else {
-            console.log("Login Failed");
-            resolve({ status: false });  // Invalid password
-          }
-        });
-      } else {
+          
+        }
+       else {
         console.log("Login Failed");
         resolve({ status: false });  // User not found
       }
+    } else {
+      console.log("Login Failed");
+      resolve({ status: false });  // User not found
+    }
     });
   },
 
