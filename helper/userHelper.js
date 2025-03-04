@@ -79,7 +79,19 @@ module.exports = {
       }
     });
   },
-
+  getComplaintDetails: (Id) => {
+    console.log(Id, "ftom   ger cmp")
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.COMPLAINTS_COLLECTION)
+        .findOne({
+          complaintId:Id
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
 
   addFeedback: (feedback) => {
     return new Promise(async (resolve, reject) => {

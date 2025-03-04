@@ -72,6 +72,24 @@
                                 {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input class="form-control me-2" type="number" name="ward" value="{{ward}}"
+                                    placeholder="Your ward"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                {{!-- <button class="btn btn-primary" type="button" id="submit">Check</button> --}}
+                                {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                            </div>
+                        </div>
+                         <div class="col-lg-6">
+                            <div class="form-group">
+                                <input class="form-control me-2" type="text" name="village" value="{{village}}"
+                                    placeholder="Your village"
+                                     placeholder="Your City" pattern="[A-Za-z]+" title="Only letters are allowed">
+                                {{!-- <button class="btn btn-primary" type="button" id="submit">Check</button> --}}
+                                {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group position-relative">

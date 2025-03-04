@@ -80,6 +80,39 @@ module.exports = {
         });
     });
   },
+    //reports
+    getComplaintsByStatus: async (status, fromDate, toDate) => {
+      try {
+          console.log("%%%%%%%%%%%%%%%%%ppppppppp%%%%%%%%%%%%%", status, fromDate, toDate);
+  
+          let query = { status: status };
+
+  
+          if (fromDate && toDate) {
+              console.log("Filtering by date range");
+  
+              // Ensure fromDate and toDate are in the same format as stored in DB
+              let formattedFromDate = fromDate + "T00:00";  // Start of the day
+              let formattedToDate = toDate + "T23:59";      // End of the day
+  
+              query.date = {
+                  $gte: formattedFromDate,  // Compare as strings
+                  $lte: formattedToDate
+              };
+          }
+  
+          let complaints = await db.get()
+              .collection(collections.COMPLAINTS_COLLECTION)
+              .find(query)
+              .toArray();
+  
+          console.log("%%%%%%%%%%%%%%%%%cccccccccccccc%%%%%%%%%%%%%", complaints);
+          return complaints;
+      } catch (error) {
+          console.error("Error fetching complaints:", error);
+          return [];
+      }
+  },
   // Fetch officials by matching department
   getOfficialsByDepartment: (department) => {
     console.log("dept:",department)

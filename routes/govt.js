@@ -104,6 +104,48 @@ router.post("/request-meeting", async (req, res) => {
   }
 });
 
+///reports
+router.get("/reports", verifySignedIn,async function (req, res, next) {
+  let govt = req.session.govt;
+    res.render("govt/reports", { govt: true,layout: "layout", govt});
+});
+router.get("/pending-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await govtHelper.getComplaintsByStatus("Pending", fromDate, toDate,govt.Department);
+  res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Pending Review Complaints" });
+});
+router.get("/under-process-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await govtHelper.getComplaintsByStatus("Under Process", fromDate, toDate,govt.Department);
+  res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Pending Review Complaints" });
+});
+router.get("/pending-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await govtHelper.getComplaintsByStatus("Pending", fromDate, toDate,govt.Department);
+  res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Under Process Complaints" });
+});
+router.get("/rejected-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await govtHelper.getComplaintsByStatus("Rejected", fromDate, toDate,govt.Department);
+  res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Rejected Complaints" });
+});
+
+router.get("/resolved-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await govtHelper.getComplaintsByStatus("Resolved", fromDate, toDate,govt.Department);
+  res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Resolved Complaints" });
+});
+
 ////////document-resolutions
 
 router.get("/document-resolutions", verifySignedIn,async function (req, res) {

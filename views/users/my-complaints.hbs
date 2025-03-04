@@ -72,13 +72,15 @@
                             <!-- Product Title-->
                             <h1>{{this.subject}}</h1>
                             <!-- Product Price-->
+                            <p class="">Complaint Id: {{this.complaintId}}</p>
+                             <p class="">Date : {{ formatDateTime this.date}}</p>
                             <p class="">Department: {{this.department}}</p>
                               <p class="">Status: {{this.status}}</p>
                               <p>days:{{daysElapsed this.date}}</p>
                             <!-- Add To Cart Button-->
-                            {{!-- <a class="btn btn-dark"
-                                href="/view-ordered-workspaces/{{this._id}}">
-                                View Details</a> --}}
+                            <a class="btn btn-dark"
+                                href="/view-complaint/{{this.complaintId}}">
+                                View Details</a>
                             {{!-- <a href="javascript:void(0);" onclick="canelorder('{{this._id}}')"
                                 class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>

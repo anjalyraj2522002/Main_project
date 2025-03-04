@@ -211,6 +211,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res) {
+  console.log("&&&&&&&&&&&&&&&&",req.body,"")
   const { Fname, Email, Phone, Address, Pincode, District, Password } = req.body;
   let errors = {};
 
@@ -510,10 +511,16 @@ router.get("/my-complaints", verifySignedIn, async function (req, res) {
   let cmp = await userHelper.getUserComplaint(userId);
   res.render("users/my-complaints", { admin: false, user, cmp});
 });
-
+router.get("/view-complaint/:id", verifySignedIn, async function (req, res) {
+  let user = req.session.user;
+ let cmpId = req.params.id;
+  let cmp = await userHelper.getComplaintDetails(cmpId);
+   // console.log(officials,"viewwwwwww")
+    res.render("users/view-complaint", { admin: false, user,cmp});
+});
 router.get("/view-ordered-workspaces/:id", verifySignedIn, async function (req, res) {
   let user = req.session.user;
-  let orderId = req.params.id;
+
 
   // Log the orderId to see if it's correctly retrieved
   console.log("Retrieved Order ID:", orderId);

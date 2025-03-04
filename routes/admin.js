@@ -73,6 +73,15 @@ router.get("/view-cmp/:id", verifySignedIn,async function (req, res, next) {
    // console.log(officials,"viewwwwwww")
     res.render("admin/view-complaint", { admin: true, cmp, officials, layout: "admin-layout", administator });
 });
+router.get("/view-cmps/:id", verifySignedIn,async function (req, res, next) {
+  let administator = req.session.admin;
+  let cmpId = req.params.id;
+  let cmp = await adminHelper.getComplaintDetails(cmpId);
+  let officials = await adminHelper.getOfficialsByDepartment(cmp.department); 
+   // console.log(officials,"viewwwwwww")
+    res.render("admin/view-cmps", { admin: true, cmp, officials, layout: "admin-layout", administator });
+});
+
 
 router.post("/assign-complaint", async (req, res) => {
   const { complaintId, officialId } = req.body;
@@ -154,6 +163,49 @@ router.get("/all-notifications", verifySignedIn, async function (req, res) {
   let notifications = await adminHelper.getAllnotifications();
   res.render("admin/all-notifications", { admin: true, layout: "admin-layout", administator, notifications });
 });
+
+///reports
+router.get("/reports", verifySignedIn,async function (req, res, next) {
+   let administator = req.session.admin;
+    res.render("admin/reports", { admin: true, layout: "admin-layout", administator,});
+});
+router.get("/pending-report",verifySignedIn, async (req, res) => {
+ 
+   let administator = req.session.admin;
+  let { fromDate, toDate } = req.query;
+  let complaints = await adminHelper.getComplaintsByStatus("Pending", fromDate, toDate);
+  res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Pending Review Complaints" });
+});
+router.get("/under-process-report",verifySignedIn, async (req, res) => {
+ 
+   let administator = req.session.admin;
+  let { fromDate, toDate } = req.query;
+  let complaints = await adminHelper.getComplaintsByStatus("Under Process", fromDate, toDate);
+  res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Pending Review Complaints" });
+});
+router.get("/pending-report",verifySignedIn, async (req, res) => {
+ 
+   let administator = req.session.admin;
+  let { fromDate, toDate } = req.query;
+  let complaints = await adminHelper.getComplaintsByStatus("Pending", fromDate, toDate);
+  res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Under Process Complaints" });
+});
+router.get("/rejected-report",verifySignedIn, async (req, res) => {
+ 
+   let administator = req.session.admin;
+  let { fromDate, toDate } = req.query;
+  let complaints = await adminHelper.getComplaintsByStatus("Rejected", fromDate, toDate);
+  res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Rejected Complaints" });
+});
+
+router.get("/resolved-report",verifySignedIn, async (req, res) => {
+ 
+  let govt = req.session.govt;
+  let { fromDate, toDate } = req.query;
+  let complaints = await adminHelper.getComplaintsByStatus("Resolved", fromDate, toDate);
+  res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Resolved Complaints" });
+});
+
 
 ///////ADD reply/////////////////////                                         
 router.get("/add-notification", verifySignedIn, async function (req, res) {

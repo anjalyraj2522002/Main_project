@@ -1,0 +1,111 @@
+<div class="page-content-wrapper main-content">
+    <div class="pt-3"></div>
+    <div class="container-lg direction-rtl">
+        <h5 class="mb-3">Reports</h5>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-3">
+                        <a href="#" class="report-trigger" data-route="/govt/pending-report">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <p class="mb-0">Pending Review Complaints</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="report-trigger" data-route="/govt/under-process-report">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <i class="bi bi-pc-display"></i>
+                                </div>
+                                <p class="mb-0">Under Process Complaints</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="report-trigger" data-route="/govt/rejected-report">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray"><i class="bi bi-wallet2 text-primary"></i></div>
+                                <p class="mb-0">Rejected Complaints</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="report-trigger" data-route="/govt/resolved-report">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray"><i class="bi bi-file-earmark-bar-graph-fill text-primary"></i></div>
+                                <p class="mb-0">Resolved Complaints</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Date Selection -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Date Range</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label for="fromDate" class="form-label">From Date</label>
+                        <input type="date" id="fromDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="toDate" class="form-label">To Date</label>
+                        <input type="date" id="toDate" class="form-control" required>
+                    </div>
+                    <input type="hidden" id="reportRoute">
+                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".report-trigger").on("click", function () {
+            let route = $(this).data("route");
+            $("#reportRoute").val(route);
+            $("#fromDate").val(""); // Clear previous selections
+            $("#toDate").val("");
+            $("#error-message").text(""); // Clear previous errors
+            $("#reportModal").modal("show");
+        });
+
+        $("#reportForm").on("submit", function (e) {
+            e.preventDefault();
+
+            let fromDate = $("#fromDate").val();
+            let toDate = $("#toDate").val();
+            let route = $("#reportRoute").val();
+
+            // Validation: Check if both dates are filled
+            if (!fromDate || !toDate) {
+                $("#error-message").text("Both From Date and To Date are required.");
+                return;
+            }
+
+            // Validation: Check if From Date is not greater than To Date
+            if (new Date(fromDate) > new Date(toDate)) {
+                $("#error-message").text("From Date cannot be later than To Date.");
+                return;
+            }
+
+            // If validation passes, redirect to the report page
+            window.location.href = route + "?fromDate=" + fromDate + "&toDate=" + toDate;
+        });
+    });
+</script>
+
