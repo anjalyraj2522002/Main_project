@@ -65,7 +65,7 @@
                     <div class="d-flex gap-2">
                         <div class="form-group w-100">
                             <label class="form-label" for="Locality">Grievance Locality</label>
-                            <input class="form-control" id="locality" name="Locality" type="text" required>
+                            <input class="form-control" id="locality" name="locality" type="text" required>
                         </div>
 
                         <div class="form-group w-100">
@@ -90,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-dark mt-4"  onclick="document.getElementById('complaint-form').submit();">File Complaint</button>
+            <button type="button" class="btn btn-dark mt-4" onclick="validateAndSubmit()">File Complaint</button>
         </div>
     </div>
 </form>
@@ -120,35 +120,85 @@
         });
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    let attachmentCount = 1;
-    const maxAttachments = 4;
-    const attachmentContainer = document.getElementById("attachmentContainer");
-    const addAttachmentBtn = document.getElementById("addAttachment");
+    document.addEventListener("DOMContentLoaded", function () {
+        let attachmentCount = 1;
+        const maxAttachments = 4;
+        const attachmentContainer = document.getElementById("attachmentContainer");
+        const addAttachmentBtn = document.getElementById("addAttachment");
+        const form = document.getElementById("complaint-form");
 
-    addAttachmentBtn.addEventListener("click", function () {
-        if (attachmentCount < maxAttachments) {
-            attachmentCount++;
+        // Add attachment functionality
+        addAttachmentBtn.addEventListener("click", function () {
+            if (attachmentCount < maxAttachments) {
+                attachmentCount++;
 
-            const newAttachmentDiv = document.createElement("div");
-            newAttachmentDiv.classList.add("attachment-input");
-            newAttachmentDiv.innerHTML = `
-                <select name="attachmentType[]" class="form-select attachment-type">
-                    <option value="image">Image (PNG)</option>
-                    <option value="video">Video (MP4)</option>
-                    <option value="pdf">PDF</option>
-                </select>
-                <input type="file" name="attachments[]" class="form-control" accept="image/png,video/mp4,application/pdf">
-                <button type="button" class="btn btn-danger remove-attachment">X</button>
-            `;
+                const newAttachmentDiv = document.createElement("div");
+                newAttachmentDiv.classList.add("attachment-input");
+                newAttachmentDiv.innerHTML = `
+                    <select name="attachmentType[]" class="form-select attachment-type">
+                        <option value="image">Image (PNG)</option>
+                        <option value="video">Video (MP4)</option>
+                        <option value="pdf">PDF</option>
+                    </select>
+                    <input type="file" name="attachments[]" class="form-control" accept="image/png,video/mp4,application/pdf">
+                    <button type="button" class="btn btn-danger remove-attachment">X</button>
+                `;
 
-            attachmentContainer.appendChild(newAttachmentDiv);
+                attachmentContainer.appendChild(newAttachmentDiv);
 
-            newAttachmentDiv.querySelector(".remove-attachment").addEventListener("click", function () {
-                attachmentContainer.removeChild(newAttachmentDiv);
-                attachmentCount--;
-            });
-        }
+                newAttachmentDiv.querySelector(".remove-attachment").addEventListener("click", function () {
+                    attachmentContainer.removeChild(newAttachmentDiv);
+                    attachmentCount--;
+                });
+            }
+        });
+
+        // Submit button click event
+        
     });
-});
+</script>
+<script>
+    function validateAndSubmit() {
+        let isValid = true;
+        let errorMessage = "";
+
+        const subject = document.getElementById("subject").value.trim();
+        const description = document.querySelector(".ck-content").innerText.trim();
+        const department = document.getElementById("department").value;
+        const category = document.getElementById("category").value;
+        const locality = document.getElementById("locality").value.trim();
+        const officeAddress = document.getElementById("office_address").value.trim();
+
+        if (!subject) {
+            isValid = false;
+            errorMessage += "❌ Subject is required.\n";
+        }
+        if (!description) {
+            isValid = false;
+            errorMessage += "❌ Description is required.\n";
+        }
+        if (department === "Select Department") {
+            isValid = false;
+            errorMessage += "❌ Please select a department.\n";
+        }
+        if (category === "Select Type") {
+            isValid = false;
+            errorMessage += "❌ Please select a complaint category.\n";
+        }
+        if (!locality) {
+            isValid = false;
+            errorMessage += "❌ Grievance Locality is required.\n";
+        }
+        if (!officeAddress) {
+            isValid = false;
+            errorMessage += "❌ Grievance Site Address is required.\n";
+        }
+
+        if (!isValid) {
+            alert(errorMessage); // Show validation errors
+        } else {
+            //console.log(locality)
+            document.getElementById("complaint-form").submit(); // Submit form if validation passes
+        }
+    }
 </script>
