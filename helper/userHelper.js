@@ -55,6 +55,9 @@ module.exports = {
           .get()
           .collection(collections.COMPLAINTS_COLLECTION)
           .find({ applicantId: userId }) // Use 'userId' directly, not inside 'orderObject'
+          .sort({ 
+            complaintId: -1 
+          })
           .toArray();
 
         resolve(cmp);

@@ -11,6 +11,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find()
+        .sort({ 
+          complaintId: -1 
+        })
         .toArray();
       resolve(result);
     });
@@ -22,6 +25,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find({status:"Pending"})
+        .sort({ 
+          complaintId: -1 // Sorting in descending order
+        })
         .toArray();
       resolve(result);
     });
@@ -32,6 +38,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find({status:"Under Process"})
+        .sort({ 
+          complaintId: -1 
+        })
         .toArray();
       resolve(result);
     });
@@ -42,6 +51,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find({status:"Resolved"})
+        .sort({ 
+          complaintId: -1 
+        })
         .toArray();
       resolve(result);
     });
@@ -52,6 +64,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find({status:"Rejected"})
+        .sort({ 
+          complaintId: -1 
+        })
         .toArray();
       resolve(result);
     });
@@ -63,6 +78,9 @@ module.exports = {
         .get()
         .collection(collections.COMPLAINTS_COLLECTION)
         .find({status:"Assigned"})
+        .sort({ 
+          complaintId: -1 
+        })
         .toArray();
       resolve(result);
     });
@@ -104,6 +122,9 @@ module.exports = {
           let complaints = await db.get()
               .collection(collections.COMPLAINTS_COLLECTION)
               .find(query)
+              .sort({ 
+                complaintId: -1 
+              })
               .toArray();
   
           console.log("%%%%%%%%%%%%%%%%%cccccccccccccc%%%%%%%%%%%%%", complaints);
@@ -146,6 +167,9 @@ getAllMeetings:()=>{
       .get()
       .collection(collections.MEETINGS_COLLECTION)
       .find({status:"Pending"})
+      .sort({ 
+        createdAt: -1 
+      })
       .toArray();
     resolve(result);
   });
@@ -157,6 +181,9 @@ getAllRejectedMeetings:()=>{
       .get()
       .collection(collections.MEETINGS_COLLECTION)
       .find({status:"Rejected"})
+      .sort({ 
+        createdAt: -1 
+      })
       .toArray();
     resolve(result);
   });
@@ -168,6 +195,9 @@ getAllAprrovedMeetings:()=>{
       .get()
       .collection(collections.MEETINGS_COLLECTION)
       .find({status:"Approved"})
+      .sort({ 
+        createdAt: -1 
+      })
       .toArray();
     resolve(result);
   });
@@ -264,99 +294,6 @@ sendNotification :async (userId, message) => {
         });
     });
   },
-
-  ///////ADD builder/////////////////////                                         
-  addbuilder: (builder, callback) => {
-    console.log(builder);
-    builder.Price = parseInt(builder.Price);
-    db.get()
-      .collection(collections.BUILDER_COLLECTION)
-      .insertOne(builder)
-      .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
-      });
-  },
-
-  ///////GET ALL builder/////////////////////                                            
-  getAllbuilders: () => {
-    return new Promise(async (resolve, reject) => {
-      let builders = await db
-        .get()
-        .collection(collections.BUILDER_COLLECTION)
-        .find()
-        .toArray();
-      resolve(builders);
-    });
-  },
-
- 
-
-  ///////DELETE builder/////////////////////                                            
-  deletebuilder: (builderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.BUILDER_COLLECTION)
-        .removeOne({
-          _id: objectId(builderId)
-        })
-        .then((response) => {
-          console.log(response);
-          resolve(response);
-        });
-    });
-  },
-
-  ///////UPDATE builder/////////////////////                                            
-  updatebuilder: (builderId, builderDetails) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.BUILDER_COLLECTION)
-        .updateOne(
-          {
-            _id: objectId(builderId)
-          },
-          {
-            $set: {
-              Name: builderDetails.Name,
-              Category: builderDetails.Category,
-              Price: builderDetails.Price,
-              Description: builderDetails.Description,
-            },
-          }
-        )
-        .then((response) => {
-          resolve();
-        });
-    });
-  },
-
-
-  ///////DELETE ALL builder/////////////////////                                            
-  deleteAllbuilders: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.BUILDER_COLLECTION)
-        .remove({})
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-
-
-  addProduct: (product, callback) => {
-    console.log(product);
-    product.Price = parseInt(product.Price);
-    db.get()
-      .collection(collections.COMPLAINTS_COLLECTION)
-      .insertOne(product)
-      .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
-      });
-  },
-
  
 
   doSignup: (adminData) => {
@@ -401,60 +338,6 @@ sendNotification :async (userId, message) => {
     });
   },
 
-  getProductDetails: (productId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.COMPLAINTS_COLLECTION)
-        .findOne({ _id: objectId(productId) })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
-
-  deleteProduct: (productId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.COMPLAINTS_COLLECTION)
-        .removeOne({ _id: objectId(productId) })
-        .then((response) => {
-          console.log(response);
-          resolve(response);
-        });
-    });
-  },
-
-  updateProduct: (productId, productDetails) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.COMPLAINTS_COLLECTION)
-        .updateOne(
-          { _id: objectId(productId) },
-          {
-            $set: {
-              Name: productDetails.Name,
-              Category: productDetails.Category,
-              Price: productDetails.Price,
-              Description: productDetails.Description,
-            },
-          }
-        )
-        .then((response) => {
-          resolve();
-        });
-    });
-  },
-
-  deleteAllProducts: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.COMPLAINTS_COLLECTION)
-        .remove({})
-        .then(() => {
-          resolve();
-        });
-    });
-  },
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
@@ -519,98 +402,6 @@ sendNotification :async (userId, message) => {
         });
     });
   },
-
-  getAllOrders: (fromDate, toDate) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let query = {};
-
-        // If fromDate and toDate are provided, filter orders by the date range
-        if (fromDate && toDate) {
-          // Add one day to toDate and set it to midnight
-          const adjustedToDate = new Date(toDate);
-          adjustedToDate.setDate(adjustedToDate.getDate() + 1);
-
-          query = {
-            date: {
-              $gte: new Date(fromDate), // Orders from the start date
-              $lt: adjustedToDate       // Orders up to the end of the toDate
-            }
-          };
-        }
-
-        let orders = await db.get()
-          .collection(collections.ORDER_COLLECTION)
-          .find(query)
-          .toArray();
-
-        resolve(orders);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-
-  getOrdersByDateRange: (fromDate, toDate) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const orders = await db.get()
-          .collection(collections.ORDER_COLLECTION)
-          .find({
-            createdAt: {
-              $gte: new Date(fromDate), // Greater than or equal to the fromDate
-              $lte: new Date(toDate)    // Less than or equal to the toDate
-            }
-          })
-          .toArray();
-        resolve(orders);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-  changeStatus: (status, orderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.ORDER_COLLECTION)
-        .updateOne(
-          { _id: objectId(orderId) },
-          {
-            $set: {
-              "orderObject.status": status,
-            },
-          }
-        )
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-
-  cancelOrder: (orderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.ORDER_COLLECTION)
-        .removeOne({ _id: objectId(orderId) })
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-
-  cancelAllOrders: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.ORDER_COLLECTION)
-        .remove({})
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-
   searchProduct: (details) => {
     console.log(details);
     return new Promise(async (resolve, reject) => {

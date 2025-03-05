@@ -1,6 +1,5 @@
 var express = require("express");
 var userHelper = require("../helper/userHelper");
-var builderHelper = require("../helper/govtHelper");
 
 var router = express.Router();
 var db = require("../config/connection");
@@ -37,7 +36,7 @@ router.post("/add-complaint", async (req, res) => {
   }
 
   const { date, subject, desc, department, category, locality, office_address, "attachmentType[]": attachmentTypes,
-    applicantId, applicantName, applicantEmail, applicantPhone, applicantPincode } = req.body;
+    applicantId, applicantName, applicantEmail, applicantPhone, applicantPincode} = req.body;
 
   const complaintData = {
     applicantId,
@@ -153,33 +152,6 @@ router.post("/add-feedback", async function (req, res) {
     res.status(500).send("Server Error");
   }
 });
-
-
-
-router.get("/single-workspace/:id", async function (req, res) {
-  let user = req.session.user;
-  const workspaceId = req.params.id;
-
-  try {
-    const workspace = await userHelper.getWorkspaceById(workspaceId);
-
-    if (!workspace) {
-      return res.status(404).send("Workspace not found");
-    }
-    const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
-
-    res.render("users/single-workspace", {
-      admin: false,
-      user,
-      workspace,
-      feedbacks
-    });
-  } catch (error) {
-    console.error("Error fetching workspace:", error);
-    res.status(500).send("Server Error");
-  }
-});
-
 
 
 
@@ -431,58 +403,6 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 });
 
 
-
-
-
-router.get('/place-order/:id', verifySignedIn, async (req, res) => {
-  const workspaceId = req.params.id;
-
-  // Validate the workspace ID
-  if (!ObjectId.isValid(workspaceId)) {
-    return res.status(400).send('Invalid workspace ID format');
-  }
-
-  let user = req.session.user;
-
-  // Fetch the product details by ID
-  let workspace = await userHelper.getWorkspaceDetails(workspaceId);
-
-  // If no workspace is found, handle the error
-  if (!workspace) {
-    return res.status(404).send('Workspace not found');
-  }
-
-  // Render the place-order page with workspace details
-  res.render('users/place-order', { user, workspace });
-});
-
-router.post('/place-order', async (req, res) => {
-  let user = req.session.user;
-  let workspaceId = req.body.workspaceId;
-
-  // Fetch workspace details
-  let workspace = await userHelper.getWorkspaceDetails(workspaceId);
-  let totalPrice = workspace.Price; // Get the price from the workspace
-
-  // Call placeOrder function
-  userHelper.placeOrder(req.body, workspace, totalPrice, user)
-    .then((orderId) => {
-      if (req.body["payment-method"] === "COD") {
-        res.json({ codSuccess: true });
-      } else {
-        userHelper.generateRazorpay(orderId, totalPrice).then((response) => {
-          res.json(response);
-        });
-      }
-    })
-    .catch((err) => {
-      console.error("Error placing order:", err);
-      res.status(500).send("Internal Server Error");
-    });
-});
-
-
-
 router.post("/verify-payment", async (req, res) => {
   console.log(req.body);
   userHelper
@@ -518,41 +438,6 @@ router.get("/view-complaint/:id", verifySignedIn, async function (req, res) {
    // console.log(officials,"viewwwwwww")
     res.render("users/view-complaint", { admin: false, user,cmp});
 });
-router.get("/view-ordered-workspaces/:id", verifySignedIn, async function (req, res) {
-  let user = req.session.user;
-
-
-  // Log the orderId to see if it's correctly retrieved
-  console.log("Retrieved Order ID:", orderId);
-
-  // Check if orderId is valid
-  if (!ObjectId.isValid(orderId)) {
-    console.error('Invalid Order ID format:', orderId);  // Log the invalid ID
-    return res.status(400).send('Invalid Order ID');
-  }
-
-  try {
-    let workspaces = await userHelper.getOrderWorkspaces(orderId);
-    res.render("users/order-workspaces", {
-      admin: false,
-      user,
-      workspaces,
-    });
-  } catch (err) {
-    console.error('Error fetching ordered workspaces:', err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-
-
-router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
-  let orderId = req.params.id;
-  userHelper.cancelOrder(orderId).then(() => {
-    res.redirect("/orders");
-  });
-});
-
 router.post("/search", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;

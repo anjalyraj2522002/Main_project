@@ -11,7 +11,11 @@ module.exports = {
             .collection(collections.COMPLAINTS_COLLECTION)
             .find({
               assignedTo: ObjectId(Id)
-            }).toArray()
+            })
+            .sort({ 
+              complaintId: -1 
+            })
+            .toArray()
             .then((response) => {
               resolve(response);
             });
@@ -140,6 +144,9 @@ getComplaintRecord: (id) => {
         let complaints = await db.get()
             .collection(collections.COMPLAINTS_COLLECTION)
             .find(query)
+            .sort({ 
+              complaintId: -1 
+            })
             .toArray();
 
         console.log("%%%%%%%%%%%%%%%%%cccccccccccccc%%%%%%%%%%%%%", complaints);

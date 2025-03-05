@@ -1,7 +1,5 @@
 var express = require("express");
 var adminHelper = require("../helper/adminHelper");
-var fs = require("fs");
-const userHelper = require("../helper/userHelper");
 var router = express.Router();
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -228,109 +226,7 @@ router.get("/delete-notification/:id", verifySignedIn, function (req, res) {
   });
 });
 
-///////ALL builder/////////////////////                                         
-router.get("/all-builders", verifySignedIn, function (req, res) {
-  let administator = req.session.admin;
-  adminHelper.getAllbuilders().then((builders) => {
-    res.render("admin/builder/all-builders", { admin: true, layout: "admin-layout", builders, administator });
-  });
-});
-
-
-
-router.post("/approve-builder/:id", verifySignedIn, async function (req, res) {
-  await db.get().collection(collections.BUILDER_COLLECTION).updateOne(
-    { _id: ObjectId(req.params.id) },
-    { $set: { approved: true } }
-  );
-  res.redirect("/admin/all-builders");
-});
-
-router.post("/reject-builder/:id", function (req, res) {
-  const builderId = req.params.id;
-  db.get()
-    .collection(collections.BUILDER_COLLECTION)
-    .updateOne({ _id: ObjectId(builderId) }, { $set: { approved: false, rejected: true } })
-    .then(() => {
-      res.redirect("/admin/all-builders");
-    })
-    .catch((err) => {
-      console.error(err);
-      res.redirect("/admin/all-builders");
-    });
-});
-
-
-router.post("/delete-builder/:id", verifySignedIn, async function (req, res) {
-  await db.get().collection(collections.BUILDER_COLLECTION).deleteOne({ _id: ObjectId(req.params.id) });
-  res.redirect("/admin/all-builders");
-});
-
-///////ADD builder/////////////////////                                         
-router.get("/add-builder", verifySignedIn, function (req, res) {
-  let administator = req.session.admin;
-  res.render("admin/builder/add-builder", { admin: true, layout: "admin-layout", administator });
-});
-
-///////ADD builder/////////////////////                                         
-router.post("/add-builder", function (req, res) {
-  adminHelper.addbuilder(req.body, (id) => {
-    let image = req.files.Image;
-    image.mv("./public/images/builder-images/" + id + ".png", (err, done) => {
-      if (!err) {
-        res.redirect("/admin/builder/all-builders");
-      } else {
-        console.log(err);
-      }
-    });
-  });
-});
-
-///////EDIT builder/////////////////////                                         
-router.get("/edit-builder/:id", verifySignedIn, async function (req, res) {
-  let administator = req.session.admin;
-  let builderId = req.params.id;
-  let builder = await adminHelper.getbuilderDetails(builderId);
-  console.log(builder);
-  res.render("admin/builder/edit-builder", { admin: true, layout: "admin-layout", builder, administator });
-});
-
-///////EDIT builder/////////////////////                                         
-router.post("/edit-builder/:id", verifySignedIn, function (req, res) {
-  let builderId = req.params.id;
-  adminHelper.updatebuilder(builderId, req.body).then(() => {
-    if (req.files) {
-      let image = req.files.Image;
-      if (image) {
-        image.mv("./public/images/builder-images/" + builderId + ".png");
-      }
-    }
-    res.redirect("/admin/builder/all-builders");
-  });
-});
-
-///////DELETE builder/////////////////////                                         
-// router.get("/delete-builder/:id", verifySignedIn, function (req, res) {
-//   let builderId = req.params.id;
-//   adminHelper.deletebuilder(builderId).then((response) => {
-//     res.redirect("/admin/all-builders");
-//   });
-// });
-
-///////DELETE ALL builder/////////////////////                                         
-router.get("/delete-all-builders", verifySignedIn, function (req, res) {
-  adminHelper.deleteAllbuilders().then(() => {
-    res.redirect("/admin/builder/all-builders");
-  });
-});
-
-router.get("/all-products", verifySignedIn, function (req, res) {
-  let administator = req.session.admin;
-  adminHelper.getAllProducts().then((products) => {
-    res.render("admin/all-products", { admin: true, layout: "admin-layout", products, administator });
-  });
-});
-
+////////////////////////////                                         
 router.get("/signup", function (req, res) {
   if (req.session.signedInAdmin) {
     res.redirect("/admin");
@@ -387,58 +283,6 @@ router.get("/signout", function (req, res) {
   res.redirect("/admin");
 });
 
-router.get("/add-product", verifySignedIn, function (req, res) {
-  let administator = req.session.admin;
-  res.render("admin/add-product", { admin: true, layout: "admin-layout", administator });
-});
-
-router.post("/add-product", function (req, res) {
-  adminHelper.addProduct(req.body, (id) => {
-    let image = req.files.Image;
-    image.mv("./public/images/product-images/" + id + ".png", (err, done) => {
-      if (!err) {
-        res.redirect("/admin/add-product");
-      } else {
-        console.log(err);
-      }
-    });
-  });
-});
-
-router.get("/edit-product/:id", verifySignedIn, async function (req, res) {
-  let administator = req.session.admin;
-  let productId = req.params.id;
-  let product = await adminHelper.getProductDetails(productId);
-  console.log(product);
-  res.render("admin/edit-product", { admin: true, layout: "admin-layout", product, administator });
-});
-
-router.post("/edit-product/:id", verifySignedIn, function (req, res) {
-  let productId = req.params.id;
-  adminHelper.updateProduct(productId, req.body).then(() => {
-    if (req.files) {
-      let image = req.files.Image;
-      if (image) {
-        image.mv("./public/images/product-images/" + productId + ".png");
-      }
-    }
-    res.redirect("/admin/all-products");
-  });
-});
-
-router.get("/delete-product/:id", verifySignedIn, function (req, res) {
-  let productId = req.params.id;
-  adminHelper.deleteProduct(productId).then((response) => {
-    fs.unlinkSync("./public/images/product-images/" + productId + ".png");
-    res.redirect("/admin/all-products");
-  });
-});
-
-router.get("/delete-all-products", verifySignedIn, function (req, res) {
-  adminHelper.deleteAllProducts().then(() => {
-    res.redirect("/admin/all-products");
-  });
-});
 
 router.get("/all-users", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
@@ -470,64 +314,6 @@ router.post("/block-user/:id", (req, res) => {
 router.get("/remove-all-users", verifySignedIn, function (req, res) {
   adminHelper.removeAllUsers().then(() => {
     res.redirect("/admin/all-users");
-  });
-});
-
-router.get("/all-orders", verifySignedIn, async function (req, res) {
-  let administator = req.session.admin;
-  let { fromDate, toDate } = req.query; // Get fromDate and toDate from the query parameters
-
-  try {
-    let orders = await adminHelper.getAllOrders(fromDate, toDate); // Pass the date range to the function
-
-    res.render("admin/finance", {
-      admin: true,
-      layout: "admin-layout",
-      administator,
-      orders,     // Render the filtered orders
-      fromDate,   // Pass back toDate and fromDate to display on the form
-      toDate
-    });
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    res.status(500).send("Server Error");
-  }
-});
-
-
-router.get(
-  "/view-ordered-products/:id",
-  verifySignedIn,
-  async function (req, res) {
-    let administator = req.session.admin;
-    let orderId = req.params.id;
-    let products = await userHelper.getOrderProducts(orderId);
-    res.render("admin/order-products", {
-      admin: true, layout: "admin-layout",
-      administator,
-      products,
-    });
-  }
-);
-
-router.get("/change-status/", verifySignedIn, function (req, res) {
-  let status = req.query.status;
-  let orderId = req.query.orderId;
-  adminHelper.changeStatus(status, orderId).then(() => {
-    res.redirect("/admin/all-orders");
-  });
-});
-
-router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
-  let orderId = req.params.id;
-  adminHelper.cancelOrder(orderId).then(() => {
-    res.redirect("/admin/all-orders");
-  });
-});
-
-router.get("/cancel-all-orders", verifySignedIn, function (req, res) {
-  adminHelper.cancelAllOrders().then(() => {
-    res.redirect("/admin/all-orders");
   });
 });
 
