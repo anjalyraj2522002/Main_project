@@ -145,6 +145,31 @@ router.get("/resolved-report",verifySignedIn, async (req, res) => {
   let complaints = await govtHelper.getComplaintsByStatus("Resolved", fromDate, toDate,govt.Department);
   res.render("govt/report-view", { govt: true,layout: "layout",govt, complaints, title: "Resolved Complaints" });
 });
+//feedback & rating
+router.get("/feedback/:complaintId", verifySignedIn, async (req, res) => {
+  try {
+    const { complaintId } = req.params;
+    let govt = req.session.govt;
+    // Fetch the feedback record for this complaint (assuming one record per user per complaint).
+    const feedback = await db.get().collection(collections.FEEDBACK_COLLECTION).findOne({ complaintId });
+    res.render("govt/all-feedbacks", { govt: true,layout: "layout",govt, feedback });
+  } catch (error) {
+    console.error("Error fetching feedback", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.get("/feedback", verifySignedIn, async (req, res) => {
+  try {
+    let govt = req.session.govt;
+    const feedbacks = await govtHelper.getAllFeedbacks(govt.Department,govt.Email);
+  
+    res.render("govt/all-feedbacks", { govt: true,layout: "layout",govt, feedbacks });
+  } catch (error) {
+    console.error("Error fetching feedback", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 ////////document-resolutions
 
@@ -224,37 +249,6 @@ router.get("/profile", async function (req, res, next) {
   res.render("govt/profile", { govt: true, layout: "layout", govt });
 });
 
-
-router.get("/govt-feedback", async function (req, res) {
-  let govt = req.session.govt; // Get the govt from session
-
-  if (!govt) {
-    return res.status(403).send("Builder not logged in");
-  }
-
-  try {
-    // Fetch feedback for this govt
-    const feedbacks = await govtHelper.getFeedbackByBuilderId(govt._id);
-
-    // Fetch workspace details for each feedback
-    const feedbacksWithWorkspaces = await Promise.all(feedbacks.map(async feedback => {
-      const workspace = await userHelper.getWorkspaceById(ObjectId(feedback.workspaceId)); // Convert workspaceId to ObjectId
-      if (workspace) {
-        feedback.workspaceName = workspace.name; // Attach workspace name to feedback
-      }
-      return feedback;
-    }));
-
-    // Render the feedback page with govt, feedbacks, and workspace data
-    res.render("govt/all-feedbacks", {
-      govt,  // Builder details
-      feedbacks: feedbacksWithWorkspaces // Feedback with workspace details
-    });
-  } catch (error) {
-    console.error("Error fetching feedback and workspaces:", error);
-    res.status(500).send("Server Error");
-  }
-});
 
 router.get("/pending-approval", function (req, res) {
   if (!req.session.signedInGovt || req.session.govt.approved) {
@@ -428,7 +422,7 @@ router.get("/signout", function (req, res) {
 router.post("/search", verifySignedIn, function (req, res) {
   let govt = req.session.govt;
   govtHelper.searchProduct(req.body).then((response) => {
-    res.render("govt/search-result", { govt: true, layout: "layout", workspace, response });
+    res.render("govt/search-result", { govt: true, layout: "layout", govt, response });
   });
 });
 

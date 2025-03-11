@@ -86,7 +86,7 @@ router.post("/assign-complaint", async (req, res) => {
   console.log("in assing ",complaintId, officialId)
   try {
       await adminHelper.assignComplaint(complaintId, officialId);
-      res.redirect("/admin")
+      res.json({ success: true, message: error.message });
   } catch (error) {
       console.error("Error assigning complaint:", error);
       res.json({ success: false, message: error.message });
@@ -198,12 +198,25 @@ router.get("/rejected-report",verifySignedIn, async (req, res) => {
 
 router.get("/resolved-report",verifySignedIn, async (req, res) => {
  
-  let govt = req.session.govt;
+ 
+  let administator = req.session.admin;
   let { fromDate, toDate } = req.query;
   let complaints = await adminHelper.getComplaintsByStatus("Resolved", fromDate, toDate);
   res.render("admin/report-view", { admin: true, layout: "admin-layout", administator, complaints, title: "Resolved Complaints" });
 });
 
+router.get("/feedback", verifySignedIn, async (req, res) => {
+  try {
+    
+   let administator = req.session.admin;
+    const feedbacks = await adminHelper.getAllFeedbacks();
+  
+    res.render("admin/all-feedbacks", { admin: true, layout: "admin-layout", administator, feedbacks });
+  } catch (error) {
+    console.error("Error fetching feedback", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 ///////ADD reply/////////////////////                                         
 router.get("/add-notification", verifySignedIn, async function (req, res) {

@@ -29,7 +29,7 @@ const getNextComplaintId = async () => {
 
 
 module.exports = {
-///////ADD workspace/////////////////////                                         
+///////ADD /////////////////////                                         
   addComplaint:async (complaint, callback) => {
     
     const complaintId = await getNextComplaintId();
@@ -41,7 +41,6 @@ module.exports = {
       .then((data) => {
         console.log("cmp addes%%%%%:",data.insertedId)
         callback(data.insertedId.toString());
-        //callback(data.ops[0]._id); // Return the inserted workspace ID
       })
       .catch((error) => {
         callback(null, error);
@@ -106,107 +105,6 @@ module.exports = {
       } catch (error) {
         reject(error); // Reject the promise on error
       }
-    });
-  },
-
-
-
-
-  getFeedbackByWorkspaceId: (workspaceId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const feedbacks = await db.get()
-          .collection(collections.FEEDBACK_COLLECTION)
-          .find({ workspaceId: ObjectId(workspaceId) }) // Convert workspaceId to ObjectId
-          .toArray();
-
-        resolve(feedbacks);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-
-  getBuilderById: (builderId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const builder = await db.get()
-          .collection(collections.BUILDER_COLLECTION)
-          .findOne({ _id: ObjectId(builderId) });
-        resolve(builder);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-
-
-
-
-
-
-
-  ///////GET ALL workspace/////////////////////     
-
-  getAllworkspaces: () => {
-    return new Promise(async (resolve, reject) => {
-      let workspaces = await db
-        .get()
-        .collection(collections.WORKSPACE_COLLECTION)
-        .find()
-        .toArray();
-      resolve(workspaces);
-    });
-  },
-
-  getWorkspaceById: (workspaceId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const workspace = await db.get()
-          .collection(collections.WORKSPACE_COLLECTION)
-          .findOne({ _id: ObjectId(workspaceId) }); // Convert workspaceId to ObjectId
-        resolve(workspace);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-  // getAllworkspaces: (builderId) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     let workspaces = await db
-  //       .get()
-  //       .collection(collections.WORKSPACE_COLLECTION)
-  //       .find({ builderId: ObjectId(builderId) }) // Filter by builderId
-  //       .toArray();
-  //     resolve(workspaces);
-  //   });
-  // },
-
-  /////// workspace DETAILS/////////////////////                                            
-  getworkspaceDetails: (workspaceId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
-        .findOne({
-          _id: ObjectId(workspaceId)
-        })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
-
-  getAllProducts: () => {
-    return new Promise(async (resolve, reject) => {
-      let products = await db
-        .get()
-        .collection(collections.COMPLAINTS_COLLECTION)
-        .find()
-        .toArray();
-      resolve(products);
     });
   },
 
@@ -363,156 +261,6 @@ module.exports = {
       resolve(total[0].total);
     });
   },
-
-
-
-
-  getWorkspaceDetails: (workspaceId) => {
-    return new Promise((resolve, reject) => {
-      if (!ObjectId.isValid(workspaceId)) {
-        reject(new Error('Invalid workspace ID format'));
-        return;
-      }
-
-      db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
-        .findOne({ _id: ObjectId(workspaceId) })
-        .then((workspace) => {
-          if (!workspace) {
-            reject(new Error('Workspace not found'));
-          } else {
-            // Assuming the workspace has a builderId field
-            resolve(workspace);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  },
-
-
-
-
-  placeOrder: (order, workspace, total, user) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        console.log(order, workspace, total);
-        let status = order["payment-method"] === "COD" ? "placed" : "pending";
-
-        // Get the workspace document to check the current seat value
-        const workspaceDoc = await db.get()
-          .collection(collections.WORKSPACE_COLLECTION)
-          .findOne({ _id: ObjectId(workspace._id) });
-
-        // Check if the workspace exists and the seat field is present
-        if (!workspaceDoc || !workspaceDoc.seat) {
-          return reject(new Error("Workspace not found or seat field is missing."));
-        }
-
-        // Convert seat from string to number and check availability
-        let seatCount = Number(workspaceDoc.seat);
-        if (isNaN(seatCount) || seatCount <= 0) {
-          return reject(new Error("Seat is not available."));
-        }
-
-        // Create the order object
-        let orderObject = {
-          deliveryDetails: {
-            Fname: order.Fname,
-            Lname: order.Lname,
-            Email: order.Email,
-            Phone: order.Phone,
-            Address: order.Address,
-            District: order.District,
-            State: order.State,
-            Pincode: order.Pincode,
-            selecteddate: order.selecteddate,
-          },
-          userId: ObjectId(order.userId),
-          user: user,
-          paymentMethod: order["payment-method"],
-          workspace: workspace,
-          totalAmount: total,
-          status: status,
-          date: new Date(),
-          builderId: workspace.builderId, // Store the builder's ID
-        };
-
-        // Insert the order into the database
-        const response = await db.get()
-          .collection(collections.ORDER_COLLECTION)
-          .insertOne(orderObject);
-
-        // Decrement the seat count
-        seatCount -= 1; // Decrement the seat count
-
-        // Convert back to string and update the workspace seat count
-        await db.get()
-          .collection(collections.WORKSPACE_COLLECTION)
-          .updateOne(
-            { _id: ObjectId(workspace._id) },
-            { $set: { seat: seatCount.toString() } } // Convert number back to string
-          );
-
-        resolve(response.ops[0]._id);
-      } catch (error) {
-        console.error("Error placing order:", error);
-        reject(error);
-      }
-    });
-  },
-
-
-  getUserOrder: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let orders = await db
-          .get()
-          .collection(collections.ORDER_COLLECTION)
-          .find({ userId: ObjectId(userId) }) // Use 'userId' directly, not inside 'orderObject'
-          .toArray();
-
-        resolve(orders);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
-  getOrderWorkspaces: (orderId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let workspaces = await db
-          .get()
-          .collection(collections.ORDER_COLLECTION)
-          .aggregate([
-            {
-              $match: { _id: ObjectId(orderId) }, // Match the order by its ID
-            },
-            {
-              $project: {
-                // Include workspace, user, and other relevant fields
-                workspace: 1,
-                user: 1,
-                paymentMethod: 1,
-                totalAmount: 1,
-                status: 1,
-                date: 1,
-                deliveryDetails: 1, // Add deliveryDetails to the projection
-
-              },
-            },
-          ])
-          .toArray();
-
-        resolve(workspaces[0]); // Fetch the first (and likely only) order matching this ID
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
-
   generateRazorpay: (orderId, totalPrice) => {
     return new Promise((resolve, reject) => {
       var options = {

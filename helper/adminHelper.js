@@ -18,7 +18,20 @@ module.exports = {
       resolve(result);
     });
   },
+  getAllFeedbacks:()=>{
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collections.FEEDBACK_COLLECTION)
+        .find()
+        .sort({ 
+          createdAt: -1 // Sorting in descending order
+        })
+        .toArray();
+      resolve(result);
+    });
 
+  },
   getAllPendingComplaints:() => {
     return new Promise(async (resolve, reject) => {
       let result = await db

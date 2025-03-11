@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
     .ck-editor__editable_inline {
     min-height: 325px;
@@ -47,7 +49,7 @@
             <td>{{this.remarks}}</td>
             <td>{{this.status}}</td>
             <td>
-                <input type="datetime-local" id="schedule-{{this._id}}" />
+                <input type="datetime-local" id="schedule-{{this._id}}" class="datetimepicker" />
                 <select id="status-{{this._id}}">
                     <option value="Pending">Pending</option>
                     <option value="Approved">Approved</option>
@@ -83,6 +85,13 @@
     // Set default value to current date and time in 12-hour format with AM/PM
     const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById('datetime').value = defaultDateTime;
+  // Initialize Flatpickr on the datetimepicker inputs
+  flatpickr(".datetimepicker", {
+    enableTime: true,
+    dateFormat: "Y-m-d h:i K",  // Format: Year-Month-Day Hour:Minute AM/PM
+    time_24hr: false           // Use 12-hour clock (with AM/PM)
+  });
+
 </script>
 
 

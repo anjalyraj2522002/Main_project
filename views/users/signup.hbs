@@ -90,6 +90,11 @@
                                 {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
                             </div>
                         </div>
+                        <div class="form-group">
+                        <input class="form-control" type="number" name="aadhar" value="{{aadhar}}"
+                            placeholder="Your Aadhar Number">
+                        {{#if errors.aadhar}}<div class="text-danger">{{errors.aadhar}}</div>{{/if}}
+                    </div>
                     </div>
 
                     <div class="form-group position-relative">
