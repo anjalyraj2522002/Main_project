@@ -1,0 +1,75 @@
+<main id="main" class="main">
+
+    <div class="pagetitle">
+       <h2 class="mb-3">Complaints - {{department}}</h2>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item active">Complaints - {{department}}</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                   <div class="card-body">
+                    <form method="GET" action="/admin/department-complaints/{{department}}" class="mb-3">
+    <label for="status">Filter by Status:</label>
+    <select name="status" id="status" class="form-select" onchange="this.form.submit()">
+        <option value="All" {{#if (eq status "All")}}selected{{/if}}>All</option>
+        <option value="Resolved" {{#if (eq status "Resolved")}}selected{{/if}}>Resolved</option>
+        <option value="Under Process" {{#if (eq status "Under Process")}}selected{{/if}}>Under Process</option>
+        <option value="Pending" {{#if (eq status "Pending")}}selected{{/if}}>Pending</option>
+    </select>
+</form>
+                   
+                    
+                    <table class="table">
+                        <h5 class="mt-3 mb-2">Complaints - {{department}}</h5>
+    <thead>
+        <tr>
+            <th>Complaint ID</th>
+            <th>Subject</th>
+            <th>Applicant Name</th>
+            <th>Status</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each complaints}}
+        <tr>
+            <td>{{this.complaintId}}</td>
+            <td>{{this.subject}}</td>
+            <td>{{this.applicantName}}</td>
+            <td>{{this.status}}</td>
+            <td>{{formatDate this.updatedAt}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="5" class="text-center">No complaints found.</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+                   </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+
+<!-- Status Filter -->
+
+
+<!-- Complaints Table -->
+<table class="table table-bordered">
+    
+</table>

@@ -65,6 +65,20 @@ module.exports = {
       }
     });
   },
+  getStatusById: (Id) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let cmp = await db
+          .get()
+          .collection(collections.COMPLAINTS_COLLECTION)
+          .findOne({ complaintId: Id }) // Use 'userId' directly, not inside 'orderObject'
+
+        resolve(cmp);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 
   getnotificationById: (userId) => {
     return new Promise(async (resolve, reject) => {

@@ -218,6 +218,31 @@ router.get("/feedback", verifySignedIn, async (req, res) => {
   }
 });
 
+router.get("/leaderboard", async (req, res) => {
+  let administator = req.session.admin;
+  try {
+    const leaderboard = await adminHelper.getLeaderboard();
+    res.render("admin/leaderboard", {admin: true, layout: "admin-layout", administator,  leaderboard });
+  } catch (error) {
+    res.status(500).send("Error loading leaderboard");
+  }
+});
+
+router.get("/department-complaints/:department", async (req, res) => {
+  try {
+    let administator = req.session.admin;
+      const { department } = req.params;
+      const { status } = req.query; // Get status filter from query params
+
+      const complaints = await adminHelper.getDepartmentComplaints(department, status || "All");
+
+      res.render("admin/department-complaints", { admin: true, layout: "admin-layout", administator,complaints, department, status: status || "All" });
+  } catch (error) {
+      console.error("Error fetching department complaints:", error);
+      res.status(500).send("Internal Server Error");
+  }
+});
+
 ///////ADD reply/////////////////////                                         
 router.get("/add-notification", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;

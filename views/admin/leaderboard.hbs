@@ -1,0 +1,127 @@
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Leaderboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item active">Leaderboard</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                   <div class="card-body">
+                   
+                    
+                    <table class="table">
+                        <h5 class="mt-3 mb-2">Department Leaderboard</h5>
+    <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Department</th>
+                <th>Resolved Complaints</th>
+                <th>Under Process</th>
+                <th>Total Complaints</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each leaderboard}}
+            <tr class="{{#if (eq this.rank 1)}}table-success{{else if (eq this.rank 2)}}table-warning{{/if}}">
+                <td >{{this.rank}}</td>
+                <td>{{this._id}}</td>
+                <td>{{this.resolvedCount}}</td>
+                <td>{{this.underProcessCount}}</td>
+                <td>{{this.totalComplaints}}</td>
+                <td>
+                    <a href="/admin/department-complaints/{{this._id}}" class="btn btn-info">View Department Complaints </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+</table>
+
+                   </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<!-- Complaint Management Modal -->
+<div class="modal fade" id="manageComplaintModal" tabindex="-1" aria-labelledby="manageComplaintLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="manageComplaintLabel">Manage Complaints</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <form id="manage-complaint-form">
+                <input type="hidden" id="manage-complaint-id" name="complaintId">
+                <div class="mb-3">
+                    <label>Status</label>
+                    <select id="manage-status" name="status" class="form-select">
+                        <option value="Under Process">Under Process</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Remarks</label>
+                    <textarea id="manage-remarks" name="remarks" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".manage-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const department = this.getAttribute("data-department");
+
+            fetch(`/api/complaints?department=${department}`)
+                .then(response => response.json())
+                .then(complaints => {
+                    if (complaints.length > 0) {
+                        document.getElementById("manage-complaint-id").value = complaints[0].complaintId;
+                        document.getElementById("manage-status").value = complaints[0].status;
+                        document.getElementById("manage-remarks").value = complaints[0].remarks;
+                    }
+                    new bootstrap.Modal(document.getElementById("manageComplaintModal")).show();
+                });
+        });
+    });
+
+    document.getElementById("manage-complaint-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("/admin/manage-complaint", {
+            method: "POST",
+            body: JSON.stringify(Object.fromEntries(formData)),
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Complaint updated successfully");
+                window.location.reload();
+            } else {
+                alert("Error updating complaint");
+            }
+        });
+    });
+});
+</script>

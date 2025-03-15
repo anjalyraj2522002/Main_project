@@ -19,7 +19,7 @@
                    <div class="card-body">
                    
                     
-                    <table class="table">
+                    <table class="table datatable">
                         <h5 class="mt-3 mb-2">feedback and ratings</h5>
     <thead>
                             <tr>
@@ -29,6 +29,8 @@
                                 {{!-- <th scope="col">Workspace Name</th> --}}
                                  <th scope="col">Rating</th>
                                 <th scope="col">Feedback</th>
+                                 <th scope="col">Department</th>
+                                 <th scope="col">Handled by</th>
 
                             </tr>
                         </thead>
@@ -39,8 +41,9 @@
                                 <td class="date-cell">{{this.createdAt}}</td>
                                 <td>{{this.username}}</td>
                                 <td>{{this.rating}}  <i class="bi bi-star-fill" style="color: #ffc107;"></i> </td>
-                                {{!-- <td>{{this.workspaceName}}</td> --}}
                                 <td>{{this.feedback}}</td>
+                                <td>{{this.department}}</td>
+                                <td>{{this.updatedBy}}</td>
                             </tr>
                             {{/each}}
                         </tbody>

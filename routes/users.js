@@ -124,13 +124,16 @@ router.get("/service", async function (req, res) {
 router.get("/rate-complaint/:id", verifySignedIn, async function (req, res, next) {
   let user = req.session.user;
   let id = req.params.id;
-  res.render("users/rate-complaint", { admin: false, user,id });
+  let cmp= await userHelper.getStatusById(id)
+  let status=cmp.status;
+  res.render("users/rate-complaint", { admin: false, user,id,status });
 });
 
 router.post("/rate-complaint", verifySignedIn, async (req, res) => {
   try {
     const { complaintId, rating, username, feedback } = req.body;
-    console.log(complaintId, rating, username, feedback)
+    const finalRating = rating ? parseInt(rating) : 0;
+ 
     const userId = req.session.user._id;
     const cmp= await userHelper.getComplaintDetails(complaintId);
     const department= cmp.department
@@ -143,7 +146,7 @@ router.post("/rate-complaint", verifySignedIn, async (req, res) => {
         { $set: {
           complaintId, userId,
             username,
-            rating: parseInt(rating),
+            rating: finalRating,
             feedback,   
             department,
             updatedBy,

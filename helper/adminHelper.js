@@ -216,6 +216,49 @@ getAllAprrovedMeetings:()=>{
   });
 
 },
+getLeaderboard: async () => {
+  try {
+    const leaderboard = await db.get().collection(collections.COMPLAINTS_COLLECTION)
+      .aggregate([
+        {
+          $group: {
+            _id: "$department",
+            resolvedCount: { $sum: { $cond: [{ $eq: ["$status", "Resolved"] }, 1, 0] } },
+            underProcessCount: { $sum: { $cond: [{ $ne: ["$status", "Resolved"] }, 1, 0] } },
+            totalComplaints: { $sum: 1 }
+          }
+        },
+        {$sort: { resolvedCount: -1, underProcessCount: 1 }} 
+      ])
+      .toArray();
+
+      leaderboard.forEach((dept, index) => {
+        dept.rank = index + 1;
+      });
+
+    return leaderboard;
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    throw error;
+  }
+},
+getDepartmentComplaints :(department, status) => {
+  return new Promise((resolve, reject) => {
+      let query = { department };
+
+      if (status && status !== "All") {
+          query.status = status;
+      }
+
+      db.get()
+          .collection(collections.COMPLAINTS_COLLECTION)
+          .find(query)
+          .sort({ updatedAt: -1 })
+          .toArray()
+          .then((complaints) => resolve(complaints))
+          .catch((err) => reject(err));
+  });
+},
 sendNotification :async (userId, message) => {
   try {
       await db.get().collection(collections.NOTIFICATIONS_COLLECTION).insertOne({
