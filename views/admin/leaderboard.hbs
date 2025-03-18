@@ -39,7 +39,7 @@
                 <td>{{this.underProcessCount}}</td>
                 <td>{{this.totalComplaints}}</td>
                 <td>
-                    <a href="/admin/department-complaints/{{this._id}}" class="btn btn-info">View Department Complaints </a>
+                    <a href="/admin/department-complaints/{{encodeURIComponent this._id}}" class="btn btn-info">View Department Complaints </a>
                 </td>
             </tr>
             {{/each}}
