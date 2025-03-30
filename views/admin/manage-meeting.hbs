@@ -49,7 +49,7 @@
             <td>{{this.remarks}}</td>
             <td>{{this.status}}</td>
             <td>
-                <input type="datetime-local" id="schedule-{{this._id}}" class="datetimepicker" />
+                <input type="datetime-local" id="schedule-{{this._id}}" class="datetimepicker" min="{{currentDateTime}}" />
                 <select id="status-{{this._id}}">
                     <option value="Pending">Pending</option>
                     <option value="Approved">Approved</option>
@@ -84,13 +84,20 @@
 
     // Set default value to current date and time in 12-hour format with AM/PM
     const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-    document.getElementById('datetime').value = defaultDateTime;
+    
+
+    
+  //  document.getElementById('datetime').value = defaultDateTime;
   // Initialize Flatpickr on the datetimepicker inputs
-  flatpickr(".datetimepicker", {
+ /* flatpickr(".datetimepicker", {
     enableTime: true,
     dateFormat: "Y-m-d h:i K",  // Format: Year-Month-Day Hour:Minute AM/PM
-    time_24hr: false           // Use 12-hour clock (with AM/PM)
-  });
+    time_24hr: false,           // Use 12-hour clock (with AM/PM)
+     minDate: new Date()
+  });*/
+
+ 
+
 
 </script>
 

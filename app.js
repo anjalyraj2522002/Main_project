@@ -60,6 +60,9 @@ app.engine(
         const year = date.getFullYear();
         return `${day}-${month}-${year}`; // Return the formatted date
       },
+      currentDateTime: function () {
+        return moment().format("YYYY-MM-DDTHH:mm")
+      },
     },
   })
 );
