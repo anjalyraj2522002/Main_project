@@ -36,9 +36,11 @@ app.engine(
         index++;
         return index;
       },
+      encodeURIComponent: function (str) {
+      return encodeURIComponent(str);
+    },
       formatDateTime:(dateTime) => {
         if (!dateTime) return "Not Available"; // Handle null, undefined, or empty values
-
     let formattedDate = moment(dateTime, "YYYY-MM-DDTHH:mm", true); // Strict parsing
 
     if (!formattedDate.isValid()) return "Not Available"; // Check for invalid dates
