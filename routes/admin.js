@@ -137,16 +137,16 @@ router.post("/set-meeting", async (req, res) => {
       );
 
       // Notify Government Official
-      await adminHelper.sendNotification(meeting.requestedBy, `Your meeting is scheduled on ${scheduledTime}. Status: ${status}`);
+      await adminHelper.sendNotification(meeting.requestedBy, `Your meeting (${meeting.subject}) is scheduled on ${scheduledTime} . Status: ${status} `);
 
       // Notify All Relevant Departments
       let departmentOfficials = await db.get().collection(collections.GOVT_COLLECTION).find({
           Department: { $in: meeting.departments }
       }).toArray();
 
-      departmentOfficials.forEach(async (official) => {
-          await adminHelper.sendNotification(official._id, `A meeting for ${meeting.departments.join(", ")} is scheduled on ${scheduledTime}.`);
-      });
+      // departmentOfficials.forEach(async (official) => {
+      //     await adminHelper.sendNotification(official._id, `A meeting for ${meeting.departments.join(", ")} is scheduled on ${scheduledTime}.`);
+      // });
 
       res.json({ success: true, message: "Meeting updated successfully!" });
   } catch (error) {
