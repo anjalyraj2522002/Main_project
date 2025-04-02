@@ -48,6 +48,32 @@ module.exports = {
             _id: ObjectId(id)
           })
   },
+  getLeaderboard: async () => {
+    try {
+      const leaderboard = await db.get().collection(collections.COMPLAINTS_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: "$department",
+              resolvedCount: { $sum: { $cond: [{ $eq: ["$status", "Resolved"] }, 1, 0] } },
+              underProcessCount: { $sum: { $cond: [{ $ne: ["$status", "Resolved"] }, 1, 0] } },
+              totalComplaints: { $sum: 1 }
+            }
+          },
+          {$sort: { resolvedCount: -1, underProcessCount: 1 }} 
+        ])
+        .toArray();
+  
+        leaderboard.forEach((dept, index) => {
+          dept.rank = index + 1;
+        });
+  
+      return leaderboard;
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      throw error;
+    }
+  },
   updateComplaintStatus: async (complaintId, status, remarks,govt) => {
     if (!ObjectId.isValid(complaintId)) {
         throw new Error("Invalid Complaint ID");

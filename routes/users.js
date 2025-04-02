@@ -33,8 +33,7 @@ router.post("/add-complaint", async (req, res) => {
     return res.redirect("/signin");
   }
 
-  const { date, subject, desc, department, category, locality, office_address, "attachmentType[]": attachmentTypes,
-    applicantId, applicantName, applicantEmail, applicantPhone, applicantPincode} = req.body;
+  const { date, subject, desc, department, category, locality, office_address, applicantId, applicantName, applicantEmail, applicantPhone, applicantPincode } = req.body;
 
   const complaintData = {
     applicantId,
@@ -48,7 +47,7 @@ router.post("/add-complaint", async (req, res) => {
     category,
     locality,
     office_address,
-    date: date,
+    date,
     status: "Pending",
     attachments: [],
   };
@@ -58,36 +57,31 @@ router.post("/add-complaint", async (req, res) => {
       console.log("Error adding complaint:", error);
       return res.status(500).send("Failed to add complaint");
     }
+    console.log("Received Files:", req.files);
 
-    // Handle file uploads
-    if (req.files && req.files.attachments) {
-      const files = Array.isArray(req.files.attachments) ? req.files.attachments : [req.files.attachments];
+    if (req.files && req.files["attachments[]"]) {
+      const files = Array.isArray(req.files["attachments[]"]) ? req.files["attachments[]"] : [req.files["attachments[]"]];
 
       files.forEach((file, index) => {
         let extension = path.extname(file.name).toLowerCase();
-        let newFilename = `${complaintId}-${index + 1}`;
+        let newFilename = `${complaintId}-${index + 1}${extension}`;
 
-        if ([".jpg", ".jpeg", ".png"].includes(extension)) {
-          newFilename += ".png";
-        } else if ([".mp4", ".avi", ".mov"].includes(extension)) {
-          newFilename += ".mp4";
-        } else if (extension === ".pdf") {
-          newFilename += ".pdf";
-        } else {
-          return; 
+        if ([".jpg", ".jpeg", ".png", ".mp4", ".avi", ".mov", ".pdf"].includes(extension)) {
+          let uploadPath = path.join(__dirname, "../public/upload/", newFilename);
+          file.mv(uploadPath, (err) => {
+            if (err) {
+              console.log("Error saving file:", err);
+            }
+          });
+
+          complaintData.attachments.push(newFilename);
         }
-
-        let uploadPath = path.join(__dirname, "../public/upload/", newFilename);
-        file.mv(uploadPath, (err) => {
-          if (err) console.log("Error saving file:", err);
-        });
-
-        complaintData.attachments.push(newFilename);
       });
 
       // Update complaint with attached files
+      console.log(complaintData.attachments,"hhhhh")
       await db.get().collection(collections.COMPLAINTS_COLLECTION).updateOne(
-        { complaintId },
+        { _id:  ObjectId(complaintId)},
         { $set: { attachments: complaintData.attachments } }
       );
     }
@@ -121,12 +115,24 @@ router.get("/service", async function (req, res) {
   res.render("users/service", { admin: false, });
 })
 
-router.get("/rate-complaint/:id", verifySignedIn, async function (req, res, next) {
+router.get("/rate-complaint/", verifySignedIn, async function (req, res, next) {
   let user = req.session.user;
-  let id = req.params.id;
-  let cmp= await userHelper.getStatusById(id)
-  let status=cmp.status;
-  res.render("users/rate-complaint", { admin: false, user,id,status });
+  let id = req.query.id;
+  console.log("sssssssss",id)
+  await userHelper.getStatusById(id).then((data)=>{
+    let status=data.status;
+    res.render("users/rate-complaint", { admin: false, user,id,status });
+    //console.log(cmp)
+  })
+});
+router.get("/leaderboard", verifySignedIn,async (req, res) => {
+  let user = req.session.user;
+  try {
+    const leaderboard = await userHelper.getLeaderboard();
+    res.render("users/leaderboard",  { admin: false, user, leaderboard });
+  } catch (error) {
+    res.status(500).send("Error loading leaderboard");
+  }
 });
 
 router.post("/rate-complaint", verifySignedIn, async (req, res) => {

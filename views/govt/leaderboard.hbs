@@ -1,0 +1,42 @@
+
+
+
+
+<div class="page-content-wrapper main-content">
+    <div class="container-md">
+        <h4 class="mt-3 mb-3">Leaderboard</h4>
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                        <h5 class="mt-3 mb-2">Department Leaderboard</h5>
+    <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Department</th>
+                <th>Resolved Complaints</th>
+                <th>Under Process</th>
+                <th>Total Complaints</th>
+              
+            </tr>
+        </thead>
+        <tbody>
+            {{#each leaderboard}}
+            <tr class="{{#if (eq this.rank 1)}}table-success{{else if (eq this.rank 2)}}table-warning{{/if}}">
+                <td >{{this.rank}}</td>
+                <td>{{this._id}}</td>
+                <td>{{this.resolvedCount}}</td>
+                <td>{{this.underProcessCount}}</td>
+                <td>{{this.totalComplaints}}</td>
+                <td>
+                    <a href="/admin/department-complaints/{{encodeURIComponent this._id}}" class="btn btn-info">View Department Complaints </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+</table>
+
+                
+                </div>
+        </div>
+    </div>
+</div>

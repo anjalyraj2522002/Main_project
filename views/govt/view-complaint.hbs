@@ -160,6 +160,47 @@
             </div>
         </div>
     </div>
+
+    <div class="container-lg">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Complaint Attachments</h5>
+           
+                {{#if cmp.attachments.length}}
+  <ul style="list-style: none; padding: 0;">
+  {{#each cmp.attachments}}
+    <li style="margin-bottom: 15px;">
+      {{#if (isImage this)}}
+        <a href="/upload/{{this}}" target="_blank">
+          <img src="/upload/{{this}}" alt="Attachment" width="200" style="display: block;">
+        </a>
+      {{else if (isVideo this)}}
+        <a href="/upload/{{this}}" target="_blank">
+          <video width="300" controls style="display: block;">
+            <source src="/upload/{{this}}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </a>
+      {{else if (isPDF this)}}
+        <a href="/upload/{{this}}" target="_blank" style="display: block; font-weight: bold; color: blue;">
+          View PDF
+        </a>
+      {{else}}
+        <a href="/upload/{{this}}" download style="display: block; font-weight: bold; color: green;">
+          Download File
+        </a>
+      {{/if}}
+    </li>
+  {{/each}}
+</ul>
+{{else}}
+  <p>No attachments available</p>
+{{/if}}
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 

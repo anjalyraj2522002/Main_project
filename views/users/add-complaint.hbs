@@ -120,42 +120,87 @@
         });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let attachmentCount = 1;
-        const maxAttachments = 4;
-        const attachmentContainer = document.getElementById("attachmentContainer");
-        const addAttachmentBtn = document.getElementById("addAttachment");
-        const form = document.getElementById("complaint-form");
+   document.addEventListener("DOMContentLoaded", function () {
+    let attachmentCount = 1;
+    const maxAttachments = 4;
+    const attachmentContainer = document.getElementById("attachmentContainer");
+    const addAttachmentBtn = document.getElementById("addAttachment");
 
-        // Add attachment functionality
-        addAttachmentBtn.addEventListener("click", function () {
-            if (attachmentCount < maxAttachments) {
-                attachmentCount++;
+    function validateFileType(selectElement, fileInput) {
+        const selectedType = selectElement.value;
+        const file = fileInput.files[0];
 
-                const newAttachmentDiv = document.createElement("div");
-                newAttachmentDiv.classList.add("attachment-input");
-                newAttachmentDiv.innerHTML = `
-                    <select name="attachmentType[]" class="form-select attachment-type">
-                        <option value="image">Image (PNG)</option>
-                        <option value="video">Video (MP4)</option>
-                        <option value="pdf">PDF</option>
-                    </select>
-                    <input type="file" name="attachments[]" class="form-control" accept="image/png,video/mp4,application/pdf">
-                    <button type="button" class="btn btn-danger remove-attachment">X</button>
-                `;
+        if (file) {
+            const fileName = file.name.toLowerCase();
+            const validExtensions = {
+                image: ["png", "jpeg", "jpg"],
+                video: ["mp4"],
+                pdf: ["pdf"],
+                mp3: ["mp3"]
+            };
 
-                attachmentContainer.appendChild(newAttachmentDiv);
-
-                newAttachmentDiv.querySelector(".remove-attachment").addEventListener("click", function () {
-                    attachmentContainer.removeChild(newAttachmentDiv);
-                    attachmentCount--;
-                });
+            const fileExtension = fileName.split(".").pop();
+            if (!validExtensions[selectedType].includes(fileExtension)) {
+                alert(`❌ Invalid file type. Please upload a ${selectedType.toUpperCase()} file (${validExtensions[selectedType].join(", ")}).`);
+                fileInput.value = ""; // Clear invalid selection
             }
+        }
+    }
+
+    function addAttachment() {
+        if (attachmentCount < maxAttachments) {
+            attachmentCount++;
+
+            const newAttachmentDiv = document.createElement("div");
+            newAttachmentDiv.classList.add("attachment-input");
+
+            newAttachmentDiv.innerHTML = `
+                <select name="attachmentType[]" class="form-select attachment-type">
+                    <option value="image">Image (PNG, JPEG)</option>
+                    <option value="video">Video (MP4)</option>
+                    <option value="pdf">PDF</option>
+                </select>
+                <input type="file" name="attachments[]" class="form-control">
+                <button type="button" class="btn btn-danger remove-attachment">X</button>
+            `;
+
+            attachmentContainer.appendChild(newAttachmentDiv);
+
+            const selectElement = newAttachmentDiv.querySelector(".attachment-type");
+            const fileInput = newAttachmentDiv.querySelector("input[type='file']");
+
+            selectElement.addEventListener("change", function () {
+                fileInput.value = ""; // Clear file input when type changes
+            });
+
+            fileInput.addEventListener("change", function () {
+                validateFileType(selectElement, fileInput);
+            });
+
+            newAttachmentDiv.querySelector(".remove-attachment").addEventListener("click", function () {
+                attachmentContainer.removeChild(newAttachmentDiv);
+                attachmentCount--;
+            });
+        }
+    }
+
+    addAttachmentBtn.addEventListener("click", addAttachment);
+
+    // Attach validation for the existing file input
+    document.querySelectorAll(".attachment-input").forEach((attachmentDiv) => {
+        const selectElement = attachmentDiv.querySelector(".attachment-type");
+        const fileInput = attachmentDiv.querySelector("input[type='file']");
+
+        selectElement.addEventListener("change", function () {
+            fileInput.value = ""; // Clear file input when type changes
         });
 
-        // Submit button click event
-        
+        fileInput.addEventListener("change", function () {
+            validateFileType(selectElement, fileInput);
+        });
     });
+});
+
 </script>
 <script>
     function validateAndSubmit() {

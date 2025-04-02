@@ -39,7 +39,7 @@ module.exports = {
       .collection(collections.COMPLAINTS_COLLECTION)
       .insertOne(complaint)
       .then((data) => {
-        console.log("cmp addes%%%%%:",data.insertedId)
+       // console.log("cmp addes%%%%%:",data.insertedId)
         callback(data.insertedId.toString());
       })
       .catch((error) => {
@@ -72,8 +72,9 @@ module.exports = {
           .get()
           .collection(collections.COMPLAINTS_COLLECTION)
           .findOne({ complaintId: Id }) // Use 'userId' directly, not inside 'orderObject'
-
+          console.log(cmp,"lllcmppppp")
         resolve(cmp);
+       
       } catch (error) {
         reject(error);
       }
@@ -121,7 +122,32 @@ module.exports = {
       }
     });
   },
+getLeaderboard: async () => {
+  try {
+    const leaderboard = await db.get().collection(collections.COMPLAINTS_COLLECTION)
+      .aggregate([
+        {
+          $group: {
+            _id: "$department",
+            resolvedCount: { $sum: { $cond: [{ $eq: ["$status", "Resolved"] }, 1, 0] } },
+            underProcessCount: { $sum: { $cond: [{ $ne: ["$status", "Resolved"] }, 1, 0] } },
+            totalComplaints: { $sum: 1 }
+          }
+        },
+        {$sort: { resolvedCount: -1, underProcessCount: 1 }} 
+      ])
+      .toArray();
 
+      leaderboard.forEach((dept, index) => {
+        dept.rank = index + 1;
+      });
+
+    return leaderboard;
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    throw error;
+  }
+},
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
       try {

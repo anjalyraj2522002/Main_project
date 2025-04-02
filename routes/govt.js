@@ -170,6 +170,15 @@ router.get("/feedback", verifySignedIn, async (req, res) => {
   }
 });
 
+router.get("/leaderboard", async (req, res) => {
+  let govt = req.session.govt;
+  try {
+    const leaderboard = await govtHelper.getLeaderboard();
+    res.render("govt/leaderboard",  { govt: true,layout: "layout",govt, leaderboard });
+  } catch (error) {
+    res.status(500).send("Error loading leaderboard");
+  }
+});
 
 ////////document-resolutions
 

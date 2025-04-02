@@ -55,6 +55,15 @@ app.engine(
       eq: function (a, b) {
         return a === b;
       },
+      isImage:function (filename) {
+        return filename.match(/\.(jpg|jpeg|png)$/i) ? true : false;
+      },
+      isVideo:function (filename) {
+        return filename.match(/\.(mp4|avi|mov)$/i) ? true : false;
+      },
+      isPDF:function (filename) {
+        return filename.match(/\.pdf$/i) ? true : false;
+      },
       formatDate: function (dateString) {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
