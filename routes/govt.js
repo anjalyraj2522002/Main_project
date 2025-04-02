@@ -66,6 +66,22 @@ router.get("/request-meeting", verifySignedIn,async function (req, res, next) {
     res.render("govt/request-meeting", { govt: true,layout: "layout", govt ,meetings});
 });
 
+router.get("/department-complaints/:department", async (req, res) => {
+  try {
+    let govt = req.session.govt;
+
+      const { department } = req.params;
+      const { status } = req.query; // Get status filter from query params
+
+      const complaints = await adminHelper.getDepartmentComplaints(department, status || "All");
+
+      res.render("govt/department-complaints", {  govt: true,layout: "layout", govt,complaints, department, status: status || "All" });
+  } catch (error) {
+      console.error("Error fetching department complaints:", error);
+      res.status(500).send("Internal Server Error");
+  }
+});
+
 router.get("/all-notifications",verifySignedIn,async (req,res)=>{
   console.log("//nootttttttt$$$$$$$$$$$$$$$$$$$$$$$$$")
   let govt = req.session.govt;

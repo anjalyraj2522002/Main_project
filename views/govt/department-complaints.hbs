@@ -1,0 +1,54 @@
+
+<div class="page-content-wrapper main-content">
+    <div class="container-md">
+        <h4 class="mt-3 mb-3"></h4>
+        <div class="card">
+            <div class="card-body">
+                  <table class="table">
+                        <h5 class="mt-3 mb-2">Complaints - {{department}}</h5>
+    <thead>
+        <tr>
+            <th>Complaint ID</th>
+            <th>Subject</th>
+            <th>Applicant Name</th>
+            <th>Status</th>
+             <th>Updated By</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each complaints}}
+        <tr>
+            <td>{{this.complaintId}}</td>
+            <td>{{this.subject}}</td>
+            <td>{{this.applicantName}}</td>
+            <td>{{this.status}}</td>
+            <td>{{this.updatedBy}}</td>
+            <td>{{formatDate this.updatedAt}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="5" class="text-center">No complaints found.</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+                </div>
+                </div>
+                </div>
+                </div>
+                
+    
+
+                
+                
+                   
+                    
+                  
+
+ 
+
+
+
+
